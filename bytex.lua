@@ -243,7 +243,7 @@ local Global = (getgenv and getgenv()) or shared
 end
 
 function runScript(scr)
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/jetray-files/ByteWare.-Bytex-/refs/heads/main/scripts/"..scr..".lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/scripts/"..scr..".lua"))()
 end
 
 function runScript2(scr, id, cframe, id2, cframe2, id3, cframe3)
@@ -260,7 +260,7 @@ function runScript2(scr, id, cframe, id2, cframe2, id3, cframe3)
         
     }
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/jetray-files/ByteWare.-Bytex-/refs/heads/main/scripts/"..scr..".lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/scripts/"..scr..".lua"))()
 end
 
 --[[
@@ -667,7 +667,7 @@ bytexgui:Notification{
     Duration = 5,
 }
 
-bytexgui:set_status("version 1.16")
+bytexgui:set_status("version 1.19")
 
 wait(1)
 
