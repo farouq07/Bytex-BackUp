@@ -1,0 +1,33 @@
+local Global = (getgenv and getgenv()) or shared
+Global.GelatekReanimateConfig = {
+    -- [[ Rig Settings ]] --
+    ["AnimationsDisabled"] = false,
+    ["R15ToR6"] = false,
+    ["DontBreakHairWelds"] = false,
+    ["PermanentDeath"] = true,
+    ["Headless"] = false,
+    ["TeleportBackWhenVoided"] = false,
+    
+    -- [[ Reanimation Settings ]] --
+    ["AlignReanimate"] = false,
+    ["FullForceAlign"] = false,
+    ["FasterHeartbeat"] = true,
+    ["DynamicalVelocity"] = false,
+    ["DisableTweaks"] = false,
+    
+    -- [[ Optimization ]] --
+    ["OptimizeGame"] = false,
+
+    -- [[ Miscellacious ]] --
+    ["LoadLibrary"] = false,
+    ["DetailedCredits"] = false,
+    
+    -- [[ Flinging Methods ]] --
+    ["TorsoFling"] = true,
+    ["BulletEnabled"] = false,
+    ["BulletConfig"] = {
+        ["RunAfterReanimate"] = false,
+        ["LockBulletOnTorso"] = false
+    }
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Gelatekussy/GelatekReanimate/main/Main.lua"))()
