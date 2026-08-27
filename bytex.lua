@@ -109,7 +109,7 @@ function Reanimate(BytexConvert_HatID, BytexConvert_HatCFrame, BytexConvert_HatL
             end
         end
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/jetray-files/ByteWare.-Bytex-/refs/heads/main/reanimate"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/ReanimaTion.lua"))()
         
         wait(0.5)
         if Bytex.UseHats then
@@ -232,7 +232,7 @@ local Global = (getgenv and getgenv()) or shared
             end
         end
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/jetray-files/ByteWare.-Bytex-/refs/heads/main/reanimate"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/ReanimaTion.lua"))()
         
         wait(0.5)
         bytexgui:Notification{
