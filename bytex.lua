@@ -673,7 +673,7 @@ scr:button({
     Name = "DubStep GUN",
     Callback = function()
         local BytexConvert_HatID = 137063455124987
-        local BytexConvert_HatCFrame = CFrame.new(0.5, -1, -1) * CFrame.Angles(math.rad(-120), math.rad(90), math.rad(0))
+        local BytexConvert_HatCFrame = CFrame.new(0.5, 0.3, -1) * CFrame.Angles(math.rad(-120), math.rad(90), math.rad(0))
         local BytexConvert_HatLimbWeld = "Right Arm"
 
         Reanimate(BytexConvert_HatID, BytexConvert_HatCFrame, BytexConvert_HatLimbWeld, true)
