@@ -659,7 +659,7 @@ scr:button({
 scr:button({
     Name = "AnimationMan",
     Callback = function()
-        local BytexConvert_HatID = 95809159983989
+        local BytexConvert_HatID = 376524487
         local BytexConvert_HatCFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0))
         local BytexConvert_HatLimbWeld = "Right Arm"
 
