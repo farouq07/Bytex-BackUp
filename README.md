@@ -6,7 +6,7 @@ A Roblox Reanimation Hub Script.
 Paste this script into your Roblox executor to run the working version:
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/jetray-files/ByteWare.-Bytex-/refs/heads/main/bytex.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/bytex.lua"))()
 ```
 
 ### 👥 Credits
