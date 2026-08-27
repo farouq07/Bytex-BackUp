@@ -660,7 +660,7 @@ scr:button({
     Name = "AnimationMan",
     Callback = function()
         local BytexConvert_HatID = 95809159983989
-        local BytexConvert_HatCFrame = CFrame.new(0, 0, 0.5) * CFrame.Angles(math.rad(0), math.rad(90), math.rad(-90))
+        local BytexConvert_HatCFrame = CFrame.new(0, 0, 0.2) * CFrame.Angles(math.rad(0), math.rad(90), math.rad(-90))
         local BytexConvert_HatLimbWeld = "Right Arm"
 
         Reanimate(BytexConvert_HatID, BytexConvert_HatCFrame, BytexConvert_HatLimbWeld, true)
