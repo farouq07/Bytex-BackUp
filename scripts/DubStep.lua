@@ -25,7 +25,7 @@ neck = torso:findFirstChild("Neck")
 rj = char:findFirstChild("HumanoidRootPart"):findFirstChild("RootJoint")
 anim = char:findFirstChild("Animate")
 
-do --Removing ROBLOX's new Looped bug >_>
+do
     local function rec(x)
         for i,v in pairs(x:children()) do
             if v:IsA'Animation' then
@@ -89,7 +89,7 @@ function trailconnect(obj, wat)
     end)
 end 
 
-do --rayCast (damage removed)
+do
     function rayCast(startpos, Speed, Gravity, Dmg, color)
         local ran,err = ypcall(function()
             local rayPart         = Instance.new("Part")
@@ -138,7 +138,6 @@ do --rayCast (damage removed)
 
                     if hit then
                         hitobj = true
-                        -- Damage removed – only visual effects remain
                         local boom = Instance.new("Part", modelforparts)
                         boom.BrickColor = rayPart.BrickColor
                         boom.Anchored = true
@@ -186,12 +185,10 @@ do --rayCast (damage removed)
             end))
         for i = 70, 65, -1.5 do
             firing = true
-            camera.FieldOfView = i
             wait()
         end
         for i = 65, 70, 2.5 do
             firing = false
-            camera.FieldOfView = i
             wait()
         end
         end)
@@ -244,7 +241,6 @@ sound.Looped = true
 dancemode = true
 debounceofsprint = false
 
--- helper functions (kept but not used for gun model)
 function part(parent, size, color, formfactor, collide, transparency)
     if transparency == nil then transparency=0 end
     if collide == nil then collide=false end
@@ -303,8 +299,6 @@ function specialmesh(parent, meshType, scale, meshId)
     return mesh
 end
 
--- gun model removed entirely
-
 function animatehuman(animationid, object)
     local animation = object:findFirstChild("Humanoid"):LoadAnimation(animationid)
     animation:Play()
@@ -315,11 +309,15 @@ danceAnim.Name = "DancingAnimation"
 
 debounce = false
 
+local targetFOV = 70
+local smoothFactor = 0.12
+
 function stopsound()
     if debounce then return end
     if not sound or not sound.IsPlaying then return end
     sound:stop()
     debounce = true
+    targetFOV = 70
     local dancebro = Instance.new("StringValue", game:service'Lighting')
     dancebro.Name = ('STOPDANCING'..plr.Name)
     game:service'Debris':AddItem(dancebro, 1)
@@ -339,23 +337,12 @@ function stopsound()
 end
 
 mouse.Button1Down:connect(function(mous)
-    -- Do not allow any action if player is dead or character is invalid
     if not humanoid or humanoid.Health <= 0 or not char.Parent then return end
     if debounceofsprint then return end
     if sound.IsPlaying then return end
     if debounce then return end
+    targetFOV = 55
     sound:play()
-    for i = 70, 55, -.35 do
-        if not sound.IsPlaying then debounce = true camera.FieldOfView = 70 return end
-        camera.FieldOfView = i
-        wait()
-    end
-    for i = 65, 70, 2.5 do
-        if not sound.IsPlaying then debounce = true camera.FieldOfView = 70 return end
-        camera.FieldOfView = i
-        wait()
-    end
-    if debounce then debounce = false return end
     if dancemode then
         for i,v in pairs(workspace:children()) do
             if not sound.IsPlaying then break end
@@ -386,6 +373,7 @@ mouse.Button1Down:connect(function(mous)
                 if not sound.IsPlaying then break end
                 sound:stop()
                 debounce = true
+                targetFOV = 70
                 chargetext.TextColor3 = Color3.new(1,0,0)
                 dancebro = Instance.new("StringValue", game:service'Lighting')
                 dancebro.Name = ('STOPDANCING'..plr.Name)
@@ -450,9 +438,9 @@ mouse.Button1Down:connect(function(mous)
 end)
 
 mouse.Button1Up:connect(function(mous)
-    -- Do not allow if dead
     if not humanoid or humanoid.Health <= 0 then return end
     stopsound()
+    targetFOV = 70
 end)
 
 ctrl = false
@@ -480,10 +468,9 @@ mouse.KeyUp:connect(function(k)
 end)
 
 humanoid.Died:connect(function()
-    -- Clean up all visual effects and stop sound
     if modelforparts then modelforparts:Destroy() end
     if sound and sound.IsPlaying then sound:stop() end
-    -- The mouse events will now be blocked by the health check
+    targetFOV = 70
     deathpos = torso.Position
     WorkModel = Instance.new("Model", workspace)
     WorkModel.Name = " "
@@ -661,27 +648,45 @@ rlc0 = rlegm.C0
 speed = 0.4
 angle = 0
 anglespeed = 0
-mvmnt = 0
+sine = 0
+change = 1
 
 game:service'RunService'.RenderStepped:connect(function()
     angle = (angle % 100) + anglespeed/10
-    mvmnt = math.pi * math.sin(math.pi*2/100*(angle*10))
+    sine = sine + change
+
     local rscf = rsc0
     local lscf = lsc0
     local rlcf = rlc0
     local llcf = llc0
     local rjcf = rootc0
     local ncf = neckc0
+
     local rayz = Ray.new(rootpart.Position, Vector3.new(0, -4.1, 0))
     local hitz, enz = workspace:findPartOnRay(rayz, char)
+
+    local dir = humanoid.MoveDirection
+    if dir.Magnitude == 0 then dir = rootpart.Velocity/10 end
+    local Ccf = rootpart.CFrame
+    local Walktest1 = dir*Ccf.LookVector
+    local Walktest2 = dir*Ccf.RightVector
+    local rotfb = Walktest1.X+Walktest1.Z
+    local rotrl = Walktest2.X+Walktest2.Z
+    if rotfb > 1 then rotfb = 1 elseif rotfb < -1 then rotfb = -1 end
+    if rotrl > 1 then rotrl = 1 elseif rotrl < -1 then rotrl = -1 end
+    local horVel = (rootpart.Velocity * Vector3.new(1,0,1)).Magnitude
+    local verVel = rootpart.Velocity.y
+
     ncf = neckc0 * CFrame.Angles(camera.CoordinateFrame.lookVector.y, 0, 0)
     rscf = rsc0 * CFrame.new(-.55, 0, .35) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2, 0, 0)
     lscf = lsc0 * CFrame.new(.85, 0, -.65) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2, 0, math.rad(45))
     if firing then
         rscf = rsc0 * CFrame.new(-.55, .15, .65) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2, 0, 0)
-        lscf = lsc0 * CFrame.new(.85, .15, -.35) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2, 0, math.rad(45)) 
+        lscf = lsc0 * CFrame.new(.85, .15, -.35) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2, 0, math.rad(45))
     end
+
     if not hitz then
+        change = 1
         ncf = neckc0 * CFrame.Angles(math.pi/18, 0, 0)
         rscf = rsc0 * CFrame.new(-.45, 0, -.75) * CFrame.Angles(math.pi/5+math.pi/18, 0, math.rad(-70))
         lscf = lsc0 * CFrame.new(.35, 0, 0) * CFrame.Angles(math.pi/3.5+math.pi/18, 0, 0)
@@ -689,15 +694,14 @@ game:service'RunService'.RenderStepped:connect(function()
         rlcf = rlc0 * CFrame.new(0, 0.7, -0.5) * CFrame.Angles(-math.pi/14, 0, 0)
         llcf = llc0 * CFrame.Angles(-math.pi/20, 0, 0)
     elseif humanoid.Sit then
+        change = 1
         ncf = neckc0 * CFrame.Angles(0, 0, 0)
         rjcf = rootc0 * CFrame.new(0, -.2, 0)
         rlcf = rlc0 * CFrame.Angles(math.pi/2, 0, math.rad(7.5))
         llcf = llc0 * CFrame.Angles(math.pi/2, 0, -math.rad(7.5))
-        if sprinting then
-            debounceofsprint = false
-            sprinting = false
-        end
-    elseif Vector3.new(torso.Velocity.x, 0, torso.Velocity.z).magnitude <= 2 then
+        if sprinting then debounceofsprint = false; sprinting = false end
+    elseif horVel <= 2 then
+        change = 1
         speed = 0.3
         if ctrl then
             rjcf = rootc0 * CFrame.new(0, -1.25, 0)
@@ -708,44 +712,53 @@ game:service'RunService'.RenderStepped:connect(function()
             rlcf = rlc0 * CFrame.Angles(-math.rad(.5), 0, math.rad(1.5))
             llcf = llc0 * CFrame.Angles(math.rad(1.5), 0, -math.rad(1.5))
         end
-    elseif Vector3.new(torso.Velocity.x, 0, torso.Velocity.z).magnitude <= 20 then
+    elseif horVel <= 20 then
         if not humanoid.Sit then
-            anglespeed = 2
-            if ctrl then
-                anglespeed = 3
-                ncf = neckc0 * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/18, 0, 0)
+            if not ctrl then
+                change = 0.6
+                rjcf = rootc0
+                local rLegAngle = math.rad((7.5 * math.abs(rotfb)) + math.sin(sine/6) * 40 * rotfb)
+                local rSide = math.rad(math.sin(sine/6) * 40 * rotrl)
+                local lLegAngle = math.rad((7.5 * math.abs(rotfb)) - math.sin(sine/6) * 40 * rotfb)
+                local lSide = math.rad(-math.sin(sine/6) * 40 * rotrl)
+                rlcf = rlc0 * CFrame.new(0, 0.2 * math.cos(sine/6), -0.3 * math.cos(sine/6)) * CFrame.Angles(rLegAngle, math.rad(math.sin(sine/6) * 5), rSide)
+                llcf = llc0 * CFrame.new(0, -0.2 * math.cos(sine/6), 0.3 * math.cos(sine/6)) * CFrame.Angles(lLegAngle, math.rad(math.sin(sine/6) * 5), lSide)
+            else
+                change = 0.9
                 rjcf = rootc0 * CFrame.new(0, -.35, 0) * CFrame.Angles(-math.pi/18, 0, 0)
+                ncf = neckc0 * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/18, 0, 0)
                 rscf = rsc0 * CFrame.new(-.55, 0, .35) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2+math.pi/18, 0, 0)
                 lscf = lsc0 * CFrame.new(.85, 0, -.65) * CFrame.Angles(camera.CoordinateFrame.lookVector.y+math.pi/2+math.pi/18, 0, math.rad(45))
-                llcf = llc0 * CFrame.new(0, .45, -.35) * CFrame.Angles(math.pi/18 - math.sin(angle)*.45, 0, 0)
-                rlcf = rlcf * CFrame.new(0, .45, -.35) * CFrame.Angles(math.pi/18 + math.sin(angle)*.45, 0, 0)
-            else
-                rjcf = rootc0
-                rlcf = rlc0 * CFrame.Angles(math.sin(-angle)*.65, 0, math.rad(.5))
-                llcf = llc0 * CFrame.Angles(math.sin(angle)*.65, 0, -math.rad(.5))
+                local legSwing = math.sin(sine/6) * 30 * rotfb
+                rlcf = rlc0 * CFrame.new(0, .45, -.35) * CFrame.Angles(math.pi/18 + math.rad(legSwing), 0, math.rad(math.sin(sine/6) * 30 * rotrl))
+                llcf = llc0 * CFrame.new(0, .45, -.35) * CFrame.Angles(math.pi/18 - math.rad(legSwing), 0, -math.rad(math.sin(sine/6) * 30 * rotrl))
             end
-            if sprinting then
-                debounceofsprint = false
-                sprinting = false
-            end
+            if sprinting then debounceofsprint = false; sprinting = false end
         end
-    elseif Vector3.new(torso.Velocity.x, 0, torso.Velocity.z).magnitude >= 20 then
+    elseif horVel > 20 then
         if not humanoid.Sit then
-            anglespeed = 2.7
+            change = 0.9
             ncf = neckc0 * CFrame.Angles(math.pi/18, 0, 0)
             rscf = rsc0 * CFrame.new(-.45, 0, -.75) * CFrame.Angles(math.pi/5+math.pi/18, 0, math.rad(-70))
             lscf = lsc0 * CFrame.new(.35, 0, 0) * CFrame.Angles(math.pi/3.5+math.pi/18, 0, 0)
             rjcf = rootc0 * CFrame.new(0, 0, 0) * CFrame.Angles(-math.pi/18, math.sin(angle)*.1, math.sin(angle)*.045)
-            rlcf = rlc0 * CFrame.new(0, .3 + -math.cos(-angle)*.3, -.2+math.sin(angle)*0.25) * CFrame.Angles(-math.pi/18+math.sin(-angle)*1.3, 0, math.rad(.5))
-            llcf = llc0 * CFrame.new(0, .3 - -math.cos(angle)*.3, -.05-math.sin(angle)*0.25) * CFrame.Angles(-math.pi/18+math.sin(angle)*1.3, 0, -math.rad(.5))
+            local rLegAngle = math.rad(math.sin(sine/3) * 80 * rotfb)
+            local rSide = math.rad(math.sin(sine/3) * 60 * rotrl)
+            local lLegAngle = math.rad(-math.sin(sine/3) * 80 * rotfb)
+            local lSide = math.rad(-math.sin(sine/3) * 60 * rotrl)
+            rlcf = rlc0 * CFrame.new(0, .3 + -math.cos(-angle)*.3, -.2+math.sin(angle)*0.25) * CFrame.Angles(-math.pi/18+math.sin(-angle)*1.3 + rLegAngle, 0, math.rad(.5) + rSide)
+            llcf = llc0 * CFrame.new(0, .3 - -math.cos(angle)*.3, -.05-math.sin(angle)*0.25) * CFrame.Angles(-math.pi/18+math.sin(angle)*1.3 + lLegAngle, 0, -math.rad(.5) + lSide)
             sprinting = true
             debounceofsprint = true
         end
     end
-    rm.C0 = clerp(rm.C0,rscf,speed)
-    lm.C0 = clerp(lm.C0,lscf,speed)
-    rj.C0 = clerp(rj.C0,rjcf,speed)
-    rlegm.C0 = clerp(rlegm.C0,rlcf,speed)
-    llegm.C0 = clerp(llegm.C0,llcf,speed)
-    neck.C0 = clerp(neck.C0,ncf,speed)
+
+    rm.C0 = clerp(rm.C0, rscf, speed)
+    lm.C0 = clerp(lm.C0, lscf, speed)
+    rj.C0 = clerp(rj.C0, rjcf, speed)
+    rlegm.C0 = clerp(rlegm.C0, rlcf, speed)
+    llegm.C0 = clerp(llegm.C0, llcf, speed)
+    neck.C0 = clerp(neck.C0, ncf, speed)
+
+    camera.FieldOfView = camera.FieldOfView + (targetFOV - camera.FieldOfView) * smoothFactor
 end)
