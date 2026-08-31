@@ -573,21 +573,6 @@ scr:button({
 
 scr:button({
 
-    Name = "Baseball Bat",
-
-    Callback = function()
-        local BytexConvert_HatID = 7063113820
-        local BytexConvert_HatCFrame = CFrame.new(0, -0.6, -1.3) * CFrame.Angles(math.rad(-90), math.rad(-90), math.rad(0))
-        local BytexConvert_HatLimbWeld = "Right Arm"
-
-        Reanimate(BytexConvert_HatID, BytexConvert_HatCFrame, BytexConvert_HatLimbWeld, true)
-
-        runScript('baseball')
-    end,
-})
-
-scr:button({
-
     Name = "Knife",
 
     Callback = function()
@@ -700,11 +685,11 @@ wait(1)
 if game.GameId ~= 123974602339071 then
     bytexgui:Prompt{
         Followup = false,
-        Title = "Warning",
-        Text = "This script may not work in this game. Click OK if you want to be teleported into Just a baseplate",
+        Title = "reminder",
+        Text = "say -net everytime you execute bytex scripts",
         Buttons = {
             ok = function()
-                game:GetService("TeleportService"):Teleport(123974602339071, game.Players.LocalPlayer)
+                
             end,
             cancel = function()
             end
