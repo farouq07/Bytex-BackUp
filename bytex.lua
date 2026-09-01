@@ -691,7 +691,7 @@ if game.GameId ~= 123974602339071 then
             ok = function()
                 
             end,
-            cancel = function()
+            no. = function()
             end
         }
     }
