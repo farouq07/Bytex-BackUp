@@ -6,6 +6,8 @@ local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 
+local LOGO_ID = "rbxassetid://110181529323436"
+
 local Themes = {
     Midnight = {
         Primary = Color3.fromRGB(91, 141, 239), PrimaryHover = Color3.fromRGB(120, 165, 250), PrimaryPressed = Color3.fromRGB(70, 115, 210),
@@ -105,27 +107,18 @@ function BytexLib.new(config)
     new("UISizeConstraint", { MaxSize = Vector2.new(900, 640), MinSize = Vector2.new(520, 380), Parent = mainFrame })
     local mainStroke = stroke(theme.Border, 1, 0.1, mainFrame)
 
-    -- === HEADER WITH LOGO ===
     local header = new("Frame", { Name = "Header", Parent = mainFrame, BackgroundColor3 = theme.Background, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 44), ZIndex = 3 })
     corner(10, header)
     new("Frame", { Parent = header, BackgroundColor3 = theme.Background, BorderSizePixel = 0, Position = UDim2.new(0, 0, 0.5, 0), Size = UDim2.new(1, 0, 0.5, 0), ZIndex = 3 })
     new("Frame", { Parent = header, BackgroundColor3 = theme.Border, BorderSizePixel = 0, Position = UDim2.new(0, 0, 1, -1), Size = UDim2.new(1, 0, 0, 1), ZIndex = 4 })
 
-    -- LOGO ICON (big, visible)
     local logoIcon = new("ImageLabel", {
-        Name = "Logo",
-        Parent = header,
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 14, 0, 8),
-        Size = UDim2.new(0, 28, 0, 28),
-        Image = "rbxassetid://110181529323436",
-        ImageColor3 = theme.Text,
-        ZIndex = 4,
+        Name = "Logo", Parent = header, BackgroundTransparency = 1, BorderSizePixel = 0,
+        Position = UDim2.new(0, 14, 0, 8), Size = UDim2.new(0, 28, 0, 28),
+        Image = LOGO_ID, ImageColor3 = theme.Text, ZIndex = 4,
         ScaleType = Enum.ScaleType.Fit,
     })
 
-    -- LOGO TEXT
     new("TextLabel", {
         Parent = header, BackgroundTransparency = 1,
         Position = UDim2.new(0, 50, 0, 0), Size = UDim2.new(0, 200, 1, 0),
@@ -144,7 +137,6 @@ function BytexLib.new(config)
 
     makeDraggable(mainFrame, header)
 
-    -- === SIDEBAR ===
     local sidebar = new("Frame", { Name = "Sidebar", Parent = mainFrame, BackgroundColor3 = theme.Surface, BorderSizePixel = 0, Position = UDim2.new(0, 0, 0, 44), Size = UDim2.new(0, 150, 1, -44), ZIndex = 3 })
     corner(10, sidebar)
     new("Frame", { Parent = sidebar, BackgroundColor3 = theme.Surface, BorderSizePixel = 0, Position = UDim2.new(0, 0, 0, 0), Size = UDim2.new(1, 0, 0, 10), ZIndex = 3 })
@@ -162,23 +154,25 @@ function BytexLib.new(config)
         TextColor3 = theme.TextDim, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 4,
     })
 
-    -- === CONTENT ===
     local content = new("Frame", { Name = "ContentContainer", Parent = mainFrame, BackgroundColor3 = theme.Background, BorderSizePixel = 0, ClipsDescendants = true, Position = UDim2.new(0, 150, 0, 44), Size = UDim2.new(1, -150, 1, -44), ZIndex = 2 })
 
-    local toggleBtn = new("TextButton", {
+    local toggleBtn = new("ImageButton", {
         Name = "ToggleButton", Parent = screenGui,
         BackgroundColor3 = theme.Surface, BorderSizePixel = 0,
-        Position = UDim2.new(0.01, 0, 0.5, -20), Size = UDim2.new(0, 44, 0, 40),
-        Text = "B", Font = Enum.Font.GothamBold, TextSize = 15, TextColor3 = theme.Text, ZIndex = 10,
+        Position = UDim2.new(0.01, 0, 0.5, -24), Size = UDim2.new(0, 48, 0, 48),
+        Image = LOGO_ID, ImageColor3 = theme.Text,
+        ScaleType = Enum.ScaleType.Fit, ZIndex = 10,
+        AutoButtonColor = false,
     })
-    corner(10, toggleBtn)
+    corner(12, toggleBtn)
     stroke(theme.Border, 1, 0.3, toggleBtn)
+    padding(6, toggleBtn)
 
     local notifStack = new("Frame", { Name = "Notifications", Parent = screenGui, AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 16), Size = UDim2.new(0, 300, 1, -32), BackgroundTransparency = 1, ZIndex = 100 })
     new("UIListLayout", { Parent = notifStack, Padding = UDim.new(0, 6), VerticalAlignment = Enum.VerticalAlignment.Top, HorizontalAlignment = Enum.HorizontalAlignment.Right, SortOrder = Enum.SortOrder.LayoutOrder })
 
     local self = {
-        _screenGui = screenGui, _mainFrame = mainFrame, _header = header, _sidebar = sidebar, _logo = logoIcon,
+        _screenGui = screenGui, _mainFrame = mainFrame, _header = header, _sidebar = sidebar, _logo = logoIcon, _toggleBtn = toggleBtn,
         _content = content, _panels = {}, _tabs = {}, _tabOrder = {}, _activeTab = nil, _activePanel = nil,
         _theme = theme, _themeName = config.Theme or "Midnight",
         _flags = flags, _connections = connections,
@@ -186,10 +180,7 @@ function BytexLib.new(config)
         _rgbRunning = false, _rgbConnection = nil,
     }
 
-    local function setVisible(v)
-        mainFrame.Visible = v
-        toggleBtn.Text = v and "×" or "B"
-    end
+    local function setVisible(v) mainFrame.Visible = v end
 
     toggleBtn.MouseButton1Click:Connect(function() setVisible(not mainFrame.Visible) end)
     closeBtn.MouseButton1Click:Connect(function() setVisible(false) end)
@@ -275,6 +266,7 @@ function BytexLib.new(config)
         content.BackgroundColor3 = t.Background
         mainStroke.Color = t.Border
         toggleBtn.BackgroundColor3 = t.Surface
+        toggleBtn.ImageColor3 = t.Text
         logoIcon.ImageColor3 = t.Text
         for _, child in ipairs(header:GetChildren()) do
             if child:IsA("Frame") then child.BackgroundColor3 = t.Border end
@@ -296,6 +288,13 @@ function BytexLib.new(config)
     end
 
     function self:getTheme() return self._theme end
+    function self:getThemeName() return self._themeName end
+    function self:getThemeList()
+        local list = {}
+        for k in pairs(Themes) do table.insert(list, k) end
+        table.sort(list)
+        return list
+    end
 
     function self:notification(title, text, duration)
         duration = duration or 4
@@ -415,7 +414,7 @@ function BytexLib.new(config)
         end
 
         function helper:addLabel(text)
-            local lbl = new("TextLabel", { Parent = helper._scroll, BackgroundTransparency = 1, Size = UDim2.new(1, -40, 0, 20), Font = Enum.Font.Gotham, Text = text, TextColor3 = theme.TextDim, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true })
+            local lbl = new("TextLabel", { Parent = helper._scroll, BackgroundTransparency = 1, Size = UDim2.new(1, -40, 0, 20), Font = Enum.Font.Gotham, Text = text, TextColor3 = theme.TextDim, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y })
             if helper._autoSize then helper._autoSize() end
             return lbl
         end
@@ -429,7 +428,7 @@ function BytexLib.new(config)
             local track = new("TextButton", { Parent = row, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, 0, 0.5, 0), Size = UDim2.new(0, 34, 0, 18), BackgroundColor3 = initial and theme.Primary or theme.SurfaceHover, BorderSizePixel = 0, Text = "", AutoButtonColor = false })
             if initial then
                 track:SetAttribute("IsPrimary", true)
-                local store = new("Color3Value", { Name = "__BaseColor", Value = theme.Primary, Parent = track })
+                new("Color3Value", { Name = "__BaseColor", Value = theme.Primary, Parent = track })
             end
             corner(999, track)
             local knob = new("Frame", { Parent = track, AnchorPoint = Vector2.new(0, 0.5), Position = initial and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0), Size = UDim2.new(0, 14, 0, 14), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0 })
@@ -440,11 +439,11 @@ function BytexLib.new(config)
                 if state then
                     track:SetAttribute("IsPrimary", true)
                     local store = track:FindFirstChild("__BaseColor") or new("Color3Value", { Name = "__BaseColor", Parent = track })
-                    store.Value = theme.Primary
+                    store.Value = self._theme.Primary
                 else
                     track:SetAttribute("IsPrimary", false)
                 end
-                local col = state and theme.Primary or theme.SurfaceHover
+                local col = state and self._theme.Primary or self._theme.SurfaceHover
                 if self._rgbRunning and state then col = Color3.fromHSV(rgbHue, 0.65, 0.95) end
                 TweenService:Create(track, TweenInfo.new(0.15), { BackgroundColor3 = col }):Play()
                 TweenService:Create(knob, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = state and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0) }):Play()
@@ -668,222 +667,5 @@ function BytexLib.new(config)
     setVisible(true)
     return self
 end
-
-local __realNew = BytexLib.new
-local __currentUI = nil
-local __used = false
-
-BytexLib.new = function(cfg)
-    __used = true
-    __currentUI = __realNew(cfg)
-    _G.__BytexUI = __currentUI
-    return __currentUI
-end
-
-task.defer(function()
-    task.wait(0.1)
-    if __used or __currentUI then return end
-
-    local ui = __realNew({ Size = UDim2.new(0, 720, 0, 480), Theme = "Black", Title = "Bytex", Version = "v1.0" })
-    __currentUI = ui
-    _G.__BytexUI = ui
-
-    local Bytex = { R6FlingPart = "Left Arm", R15FlingPart = "LeftFoot", R6FakeLimb = 63690008, GiveHatPrefix = "-gh", Permadeath = true, UseHats = true, ExtraHats = true, FlingEnabled = true, FlingPartRestingOffset = -10 }
-
-    local function sendMessage(message)
-        local tcs = game:GetService("TextChatService")
-        if tcs and tcs:FindFirstChild("TextChannels") then
-            local channel = tcs.TextChannels:FindFirstChild("RBXGeneral")
-            if channel then channel:SendAsync(message) return end
-        end
-        local chat = game:GetService("Chat")
-        if chat and player.Character then chat:Chat(player.Character, message) end
-    end
-
-    local function Reanimate(hatID, hatCFrame, limbWeld, isMelee, meleeOffsetZ, meleeOffsetX, extraHatIDs)
-        local Global = getgenv() or shared
-        local fakeLimbName = "Head"
-        pcall(function() fakeLimbName = game:GetObjects("rbxassetid://"..tostring(Bytex.R6FakeLimb))[1].Name end)
-        Global.GelatekReanimateConfig = {
-            AnimationsDisabled = false, R15ToR6 = true, DontBreakHairWelds = false,
-            PermanentDeath = Bytex.Permadeath, Headless = false, TeleportBackWhenVoided = false,
-            AlignReanimate = true, FullForceAlign = false, FasterHeartbeat = true,
-            DynamicalVelocity = false, DisableTweaks = true, OptimizeGame = false,
-            LoadLibrary = true, DetailedCredits = false, TorsoFling = true,
-            R6FlingPart = Bytex.R6FlingPart, R15FlingPart = Bytex.R15FlingPart,
-            R6FakeLimb = fakeLimbName, FlingPartRestingOffset = Bytex.FlingPartRestingOffset,
-            BulletEnabled = Bytex.FlingEnabled, MeleeScript = isMelee or false,
-            MeleeOffsetZ = meleeOffsetZ or -2.5, MeleeOffsetX = meleeOffsetX or 0,
-            BulletConfig = { RunAfterReanimate = true, LockBulletOnTorso = true },
-        }
-        if Bytex.UseHats then
-            local hatName = pcall(function() return game:GetObjects("rbxassetid://"..tostring(hatID))[1].Name end) and game:GetObjects("rbxassetid://"..tostring(hatID))[1].Name or nil
-            if hatName then
-                local accessory = player.Character:FindFirstChild(hatName)
-                if not accessory then
-                    task.wait()
-                    if Bytex.ExtraHats and extraHatIDs then sendMessage("/e "..Bytex.GiveHatPrefix.." "..tostring(hatID)..", "..extraHatIDs)
-                    else sendMessage("/e "..Bytex.GiveHatPrefix.." "..tostring(hatID)) end
-                    return
-                end
-            end
-        end
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/ReanimaTion.lua"))()
-        task.wait(0.5)
-        if Bytex.UseHats then
-            local character = player.Character
-            if not character then return end
-            local rightArm = character:FindFirstChild(limbWeld or "Right Arm") or character:FindFirstChild("Right Arm")
-            if not rightArm then return end
-            local hatName = pcall(function() return game:GetObjects("rbxassetid://"..tostring(hatID))[1].Name end) and game:GetObjects("rbxassetid://"..tostring(hatID))[1].Name or nil
-            if not hatName then return end
-            local accessory = character:FindFirstChild(hatName)
-            if not accessory then return end
-            local handle = accessory:FindFirstChild("Handle")
-            if not handle then return end
-            for _, v in ipairs(handle:GetChildren()) do if v:IsA("Weld") or v:IsA("Motor6D") or v:IsA("WeldConstraint") then v:Destroy() end end
-            local grip = Instance.new("Part")
-            grip.Name = "AccessoryGrip"; grip.Size = Vector3.new(0.2,0.2,0.2); grip.Transparency = 1; grip.CanCollide = false; grip.Anchored = false; grip.Parent = character
-            local gripWeld = Instance.new("Motor6D")
-            gripWeld.Name = "GripWeld"; gripWeld.Part0 = rightArm; gripWeld.Part1 = grip
-            gripWeld.C0 = hatCFrame or CFrame.new(0,-1.5,-0.6)*CFrame.Angles(math.rad(-90),math.rad(90),0); gripWeld.Parent = grip
-            local alignPos = Instance.new("AlignPosition")
-            alignPos.Attachment0 = Instance.new("Attachment", handle); alignPos.Attachment1 = Instance.new("Attachment", grip)
-            alignPos.RigidityEnabled = false; alignPos.Responsiveness = 200; alignPos.MaxForce = 100000; alignPos.Parent = handle
-            local alignOri = Instance.new("AlignOrientation")
-            alignOri.Attachment0 = alignPos.Attachment0; alignOri.Attachment1 = alignPos.Attachment1
-            alignOri.MaxTorque = 100000; alignOri.Responsiveness = 200; alignOri.Parent = handle
-            handle.Parent = workspace; task.wait(); handle.Parent = accessory
-        end
-    end
-
-    local function Reanimate2(hatID, hatCFrame, isMelee, meleeOffsetZ, meleeOffsetX)
-        local Global = getgenv() or shared
-        local fakeLimbName = "Head"
-        pcall(function() fakeLimbName = game:GetObjects("rbxassetid://"..tostring(Bytex.R6FakeLimb))[1].Name end)
-        Global.GelatekReanimateConfig = {
-            AnimationsDisabled = false, R15ToR6 = true, DontBreakHairWelds = not Bytex.FlingEnabled,
-            PermanentDeath = Bytex.Permadeath, Headless = false, TeleportBackWhenVoided = false,
-            AlignReanimate = true, FullForceAlign = false, FasterHeartbeat = true,
-            DynamicalVelocity = false, DisableTweaks = true, OptimizeGame = false,
-            LoadLibrary = false, DetailedCredits = false, TorsoFling = false,
-            R6FlingPart = Bytex.R6FlingPart, R15FlingPart = Bytex.R15FlingPart,
-            R6FakeLimb = fakeLimbName, FlingPartRestingOffset = Bytex.FlingPartRestingOffset,
-            BulletEnabled = Bytex.FlingEnabled, MeleeScript = isMelee or false,
-            MeleeOffsetZ = meleeOffsetZ or -2.5, MeleeOffsetX = meleeOffsetX or 0,
-            BulletConfig = { RunAfterReanimate = false, LockBulletOnTorso = true },
-        }
-        if Bytex.UseHats then
-            local hatName = pcall(function() return game:GetObjects("rbxassetid://"..tostring(hatID))[1].Name end) and game:GetObjects("rbxassetid://"..tostring(hatID))[1].Name or nil
-            if hatName then
-                local accessory = player.Character:FindFirstChild(hatName)
-                if not accessory then task.wait(); sendMessage("/e "..Bytex.GiveHatPrefix.." "..tostring(hatID)); return end
-            end
-        end
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/ReanimaTion.lua"))()
-        task.wait(0.5)
-    end
-
-    local function runScript(n) loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/scripts/"..n..".lua"))() end
-    local function runScript2(n, hatID, hatCFrame, hatID2, cframe2, hatID3, cframe3)
-        local g = getgenv() or shared
-        g.neptunian = { usinghats = Bytex.UseHats, bhatid = hatID, bcframele = hatCFrame, bhatid2 = hatID2, bcframele2 = cframe2, bhatid3 = hatID3, bcframele3 = cframe3 }
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/farouq07/Bytex-BackUp/refs/heads/main/scripts/"..n..".lua"))()
-    end
-
-    local home = ui:tab({ Name = "Home" })
-    home:createScrolling()
-    home:addSection("Overview")
-    home:addLabel("Bytex reanimation suite. Pick a script from the sidebar.")
-    home:addSection("Appearance")
-    for _, tName in ipairs({ "Midnight", "Slate", "Warm", "Dark", "Ocean", "Black" }) do
-        home:addButton(tName, function()
-            ui:setTheme(tName)
-            ui:notification("Theme changed", "Now using " .. tName)
-        end)
-    end
-    home:addSection("Effects")
-    home:addButton("Toggle RGB accent", function()
-        if ui._rgbRunning then ui:stopRGB(); ui:notification("RGB off", "Reverted to default accent")
-        else ui:startRGB(0.12); ui:notification("RGB on", "Accent is now cycling") end
-    end)
-
-    local rean = ui:tab({ Name = "Reanimate" })
-    rean:createScrolling()
-    rean:addSection("Rig")
-    rean:addToggle("Permadeath", Bytex.Permadeath, function(v) Bytex.Permadeath = v end)
-    rean:addToggle("Use Hats", Bytex.UseHats, function(v) Bytex.UseHats = v end)
-    rean:addToggle("Extra Hats", Bytex.ExtraHats, function(v) Bytex.ExtraHats = v end)
-    rean:addSection("Flinging")
-    rean:addToggle("Fling enabled", Bytex.FlingEnabled, function(v) Bytex.FlingEnabled = v end)
-    rean:addSlider("Resting offset", -20, 20, Bytex.FlingPartRestingOffset, function(v) Bytex.FlingPartRestingOffset = v end)
-    rean:addDropdown("R15 part", { "RightHand","LeftHand","RightFoot","LeftFoot","RightUpperArm","LeftUpperArm","RightLowerArm","LeftLowerArm","RightLowerLeg","LeftLowerLeg","RightUpperLeg","LeftUpperLeg" }, Bytex.R15FlingPart, function(v) Bytex.R15FlingPart = v end)
-    rean:addDropdown("R6 part", { "Left Leg","Right Leg","Left Arm","Right Arm" }, Bytex.R6FlingPart, function(v) Bytex.R6FlingPart = v end)
-    rean:addSection("Actions")
-    rean:addButton("Respawn", function()
-        local char = player.Character
-        if char then
-            local hrp = char:FindFirstChild("HumanoidRootPart")
-            local pos = hrp and hrp.CFrame or CFrame.new(0, 0, 0)
-            sendMessage("/e -rs")
-            player.CharacterAdded:Wait()
-            local newChar = player.Character
-            newChar:WaitForChild("Humanoid").Health = 0
-            player.CharacterAdded:Wait()
-            local newChar2 = player.Character
-            local hrp2 = newChar2:FindFirstChild("HumanoidRootPart")
-            if hrp2 then hrp2:MoveTo(pos.Position) end
-        end
-    end)
-
-    local scr = ui:tab({ Name = "Scripts" })
-    scr:createScrolling()
-    scr:addSection("Weapons")
-
-    local weaponList = {
-        {name = "Sniper", hatID = 133000590731897, cframe = CFrame.new(0,-1.5,-0.6)*CFrame.Angles(math.rad(-90),math.rad(90),0), limb="Right Arm", scriptName="sniper"},
-        {name = "Elio Blasio", hatID = 100171532179089, cframe = CFrame.new(0,-1.2,-0.6)*CFrame.Angles(math.rad(-90),math.rad(-360),0), limb="Right Arm", scriptName="elioblasio", extraHats="181354245, 14463095"},
-        {name = "Trap Rifle", hatID = 97794328990149, cframe = CFrame.new(0,-1.5,-0.6)*CFrame.Angles(math.rad(-50),math.rad(90),0), limb="Right Arm", scriptName="traprifle"},
-        {name = "Minigun", hatID = 18577802391, cframe = CFrame.new(0.4,-1.2,-1)*CFrame.Angles(math.rad(50),math.rad(90),0), limb="Right Arm", scriptName="minigun", extraHats="17115017000,17688184206,17688170079,17688167550"},
-        {name = "Shotgun", hatID = 95395812026004, cframe = CFrame.new(0,-1.9,-0.4)*CFrame.Angles(math.rad(-33),math.rad(-90),0), limb="Right Arm", scriptName="shotgun"},
-        {name = "Flamethrower", hatID = 6201702979, cframe = CFrame.new(-1.2,-1.8,-0.9)*CFrame.Angles(math.rad(-45),math.rad(-90),0), limb="Right Arm", scriptName="flamethrower", melee=true, meleeOffsetZ=-3.4, meleeOffsetX=1.2},
-        {name = "Raygun", hatID = 18492888971, cframe = CFrame.new(0,-1.2,-0.55)*CFrame.Angles(0,0,math.rad(90)), limb="Right Arm", scriptName="raygun"},
-        {name = "Lightning Cannon", hatID = 4623059912, cframe = CFrame.new(0,-1.2,-0.55)*CFrame.Angles(math.rad(-45),math.rad(90),0), limb="Right Arm", scriptName="lightningcannon"},
-        {name = "Abyss Eye", hatID = 16638328893, cframe = CFrame.new(0,0,0)*CFrame.Angles(math.rad(-70),math.rad(-90),0), scriptName="abysseye", useReanimate2=true},
-        {name = "Neptunian V", hatID = 112934510372081, cframe = CFrame.new(0,-0.8,0)*CFrame.Angles(math.rad(-70),math.rad(-90),0), scriptName="neptunian", useReanimate2=true},
-        {name = "Goner", hatID = 17835236579, cframe = CFrame.new(0,-0.5,1.7)*CFrame.Angles(math.rad(-40),math.rad(-90),0), limb="Right Arm", scriptName="goner", melee=true, meleeOffsetZ=-3.15, extraHats="17770317484,17822722698,17822749561,17772174303"},
-        {name = "Minecraft Sword", hatID = 76150994705890, cframe = CFrame.new(0,-0.6,-1.3)*CFrame.Angles(math.rad(135),math.rad(-90),0), limb="Right Arm", scriptName="minecraftsword", melee=true},
-        {name = "Hammer", hatID = 17582812822, cframe = CFrame.new(0,-0.6,-1.3)*CFrame.Angles(math.rad(-90),math.rad(-90),0), limb="Right Arm", scriptName="hammer", melee=true},
-        {name = "Gale Fighter", hatID = 121629329212819, cframe = CFrame.new(0,-0.5,1.7)*CFrame.Angles(math.rad(-40),math.rad(-90),0), limb="Right Arm", scriptName="goner", melee=true, meleeOffsetZ=-3.15, extraHats="78327599218076"},
-        {name = "Knife", hatID = 76987834134194, cframe = CFrame.new(0,-1,-0.5), limb="Right Arm", scriptName="knife", melee=true},
-        {name = "Rocket Launcher", hatID = 86195639625389, cframe = CFrame.new(0,-1.5,-0.7)*CFrame.Angles(math.rad(90),math.rad(90),0), limb="Right Arm", scriptName="Rocket", melee=true},
-        {name = "John Doe", hatID = 122293866267553, cframe = CFrame.new(0.3,-0.5,0), limb="Right Arm", scriptName="Johny", extraHats="88189987572253,102093976550242,18196403126"},
-        {name = "Lua Hammer", hatID = 93248624842643, cframe = CFrame.new(0,-0.6,-1.3)*CFrame.Angles(math.rad(-90),math.rad(-90),0), limb="Right Arm", scriptName="LuaHammer", melee=true},
-        {name = "HyperLaser", hatID = 132075823905007, cframe = CFrame.new(0,-1.2,-0.5)*CFrame.Angles(0,math.rad(90),math.rad(-90)), limb="Right Arm", scriptName="HyperLaser", melee=true},
-        {name = "AnimationMan", hatID = 376524487, cframe = CFrame.new(0,0,0), limb="Right Arm", scriptName="AnimationMan", melee=true},
-        {name = "DubStep", hatID = 137063455124987, cframe = CFrame.new(0.5,0.3,-1)*CFrame.Angles(math.rad(-120),math.rad(90),0), limb="Right Arm", scriptName="DubStep", melee=true},
-    }
-
-    for _, w in ipairs(weaponList) do
-        scr:addWeaponButton(w.name, function(btn)
-            btn.Text = "  Loading..."
-            task.spawn(function()
-                if w.useReanimate2 then
-                    Reanimate2(w.hatID, w.cframe, w.melee or false, w.meleeOffsetZ, w.meleeOffsetX)
-                    runScript2(w.scriptName, w.hatID, w.cframe)
-                else
-                    Reanimate(w.hatID, w.cframe, w.limb or "Right Arm", w.melee or false, w.meleeOffsetZ, w.meleeOffsetX, w.extraHats)
-                    runScript(w.scriptName)
-                end
-                btn.Text = "  " .. w.name .. "  ✓"
-                task.wait(1)
-                btn.Text = "  " .. w.name
-            end)
-        end)
-    end
-
-    ui:selectFirstTab()
-    ui:notification("Bytex loaded", "Select a script from the sidebar", 4)
-end)
 
 return BytexLib
