@@ -1,28 +1,1234 @@
-local fortnite = (getgenv and getgenv()) or shared
+local UserConfig = {
+    ["YeImTory"] = {
+        Text = "Neptunian remaker",
+        TextColor = Color3.fromRGB(255, 215, 0),
+        HighlightColor = Color3.fromRGB(255, 215, 0),
+    },
+}
 
-bytexfesettings = fortnite.neptunian
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-loadstring(game:GetObjects("rbxassetid://5425999987")[1].Source)()
-warn("(not converted by mizt, i just needed his loadlibrary thing) (hes a goat tho)")
+local function applyEffects(player, character)
 
-warn'Neptune/Neptunian V'
-warn[[Absolutely.
+    if player == LocalPlayer then return end
 
-Created by NoobyGames12
-----------------------------]]
+    local config = UserConfig[player.Name]
+    if not config then return end
 
-print[[Set your theme by: 
-id/
-vol/
-pitch/
-You can skip through the position of theme by:
-skipto/]]
+    if character:FindFirstChild(":3_Tag") or character:FindFirstChild(":3_Highlight") then
+        return
+    end
 
-warn("Have fun using this!")
----- DO NOT CHANGE ANYTHING BELOW IF YOU'RE NOT AN EDITOR 
+    local hrp = character:WaitForChild("HumanoidRootPart", 5)
+    if not hrp then return end
 
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = ":3_Tag"
+    billboard.AlwaysOnTop = true
 
+    billboard.Size = UDim2.new(5, 0, 1.2, 0) 
+    billboard.StudsOffset = Vector3.new(0, 3.8, 0)
+    billboard.Adornee = hrp
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = config.Text
+    textLabel.TextColor3 = config.TextColor
+    textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    textLabel.TextStrokeTransparency = 0
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.SourceSansBold
+    textLabel.Parent = billboard
+    billboard.Parent = character
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = ":3_Highlight"
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.OutlineColor = config.HighlightColor
+    highlight.OutlineTransparency = 0
+    highlight.FillColor = config.HighlightColor
+    highlight.FillTransparency = 0.85
+    highlight.Adornee = character
+    highlight.Parent = character
+end
+
+local function onPlayerAdded(player)
+
+    if player == LocalPlayer then return end
+
+    if UserConfig[player.Name] then
+        player.CharacterAdded:Connect(function(character)
+            applyEffects(player, character)
+        end)
+
+        if player.Character then
+            applyEffects(player, player.Character)
+        end
+    end
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+
+if not isfolder("ToryAssets") then
+    makefolder("ToryAssets")
+end
+
+local assets = {
+    {name = "ToryAssets/censored.mp3", url = "https://github.com/Jskfhggjxu/nep-remake-tory-assets/blob/main/censored.mp3?raw=true"},
+    {name = "ToryAssets/Neptunian V.mp3", url = "https://github.com/Jskfhggjxu/nep-remake-tory-assets/blob/main/Neptunian%20V.mp3?raw=true"},
+    {name = "ToryAssets/CRAZED.mp3", url = "https://github.com/Jskfhggjxu/nep-remake-tory-assets/blob/main/CRAZED.mp3?raw=true"},
+    {name = "ToryAssets/BloodDrain_Again.mp3", url = "https://github.com/Jskfhggjxu/nep-remake-tory-assets/blob/main/BloodDrain_Again.mp3?raw=true"},
+    {name = "ToryAssets/BigBlack.mp3", url = "https://github.com/Jskfhggjxu/nep-remake-tory-assets/blob/main/BigBlack.mp3?raw=true"}
+}
+
+for _, asset in ipairs(assets) do
+    if not isfile(asset.name) then
+        local success, content = pcall(function()
+            return game:HttpGet(asset.url)
+        end)
+        
+        if success and content then
+            writefile(asset.name, content)
+        else
+            warn("Downloadfail: " .. asset.name)
+        end
+    end
+end
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+task.wait(1)
+
+local args = {
+	"cmd",
+	"-gh 112934510372081 2649326901"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("01_server"):FireServer(unpack(args))
+wait(2)
+local args = {
+	"cmd",
+	"-net"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("01_server"):FireServer(unpack(args))
+
+wait(.1)
+ 
 --Converted with ttyyuu12345's model to script plugin v4
+function LoadLibrary(a)
+local t = {}
+ 
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------JSON Functions Begin----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+ 
+--JSON Encoder and Parser for Lua 5.1
+
+--Permission is hereby granted, free of charge, to any person
+--obtaining a copy of this software to deal in the Software without
+--restriction, including without limitation the rights to use,
+--copy, modify, merge, publish, distribute, sublicense, and/or
+--sell copies of the Software, and to permit persons to whom the
+--Software is furnished to do so, subject to the following conditions:
+ 
+--The above copyright notice and this permission notice shall be
+--included in all copies or substantial portions of the Software.
+--If you find this software useful please give www.chipmunkav.com a mention.
+ 
+--THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+--EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+--OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+--IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+--ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+--CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+--CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+local string = string
+local math = math
+local table = table
+local error = error
+local tonumber = tonumber
+local tostring = tostring
+local type = type
+local setmetatable = setmetatable
+local pairs = pairs
+local ipairs = ipairs
+local assert = assert
+ 
+ 
+local StringBuilder = {
+buffer = {}
+}
+ 
+function StringBuilder:New()
+local o = {}
+setmetatable(o, self)
+self.__index = self
+o.buffer = {}
+return o
+end
+ 
+function StringBuilder:Append(s)
+self.buffer[#self.buffer+1] = s
+end
+ 
+function StringBuilder:ToString()
+return table.concat(self.buffer)
+end
+ 
+local JsonWriter = {
+backslashes = {
+['\b'] = "\\b",
+['\t'] = "\\t",
+['\n'] = "\\n",
+['\f'] = "\\f",
+['\r'] = "\\r",
+['"'] = "\\\"",
+['\\'] = "\\\\",
+['/'] = "\\/"
+}
+}
+ 
+function JsonWriter:New()
+local o = {}
+o.writer = StringBuilder:New()
+setmetatable(o, self)
+self.__index = self
+return o
+end
+ 
+function JsonWriter:Append(s)
+self.writer:Append(s)
+end
+ 
+function JsonWriter:ToString()
+return self.writer:ToString()
+end
+ 
+function JsonWriter:Write(o)
+local t = type(o)
+if t == "nil" then
+self:WriteNil()
+elseif t == "boolean" then
+self:WriteString(o)
+elseif t == "number" then
+self:WriteString(o)
+elseif t == "string" then
+self:ParseString(o)
+elseif t == "table" then
+self:WriteTable(o)
+elseif t == "function" then
+self:WriteFunction(o)
+elseif t == "thread" then
+self:WriteError(o)
+elseif t == "userdata" then
+self:WriteError(o)
+end
+end
+ 
+function JsonWriter:WriteNil()
+self:Append("null")
+end
+ 
+function JsonWriter:WriteString(o)
+self:Append(tostring(o))
+end
+ 
+function JsonWriter:ParseString(s)
+self:Append('"')
+self:Append(string.gsub(s, "[%z%c\\\"/]", function(n)
+local c = self.backslashes[n]
+if c then return c end
+return string.format("\\u%.4X", string.byte(n))
+end))
+self:Append('"')
+end
+ 
+function JsonWriter:IsArray(t)
+local count = 0
+local isindex = function(k)
+if type(k) == "number" and k > 0 then
+if math.floor(k) == k then
+return true
+end
+end
+return false
+end
+for k,v in pairs(t) do
+if not isindex(k) then
+return false, '{', '}'
+else
+count = math.max(count, k)
+end
+end
+return true, '[', ']', count
+end
+ 
+function JsonWriter:WriteTable(t)
+local ba, st, et, n = self:IsArray(t)
+self:Append(st)
+if ba then
+for i = 1, n do
+self:Write(t[i])
+if i < n then
+self:Append(',')
+end
+end
+else
+local first = true;
+for k, v in pairs(t) do
+if not first then
+self:Append(',')
+end
+first = false;
+self:ParseString(k)
+self:Append(':')
+self:Write(v)
+end
+end
+self:Append(et)
+end
+ 
+function JsonWriter:WriteError(o)
+error(string.format(
+"Encoding of %s unsupported",
+tostring(o)))
+end
+ 
+function JsonWriter:WriteFunction(o)
+if o == Null then
+self:WriteNil()
+else
+self:WriteError(o)
+end
+end
+ 
+local StringReader = {
+s = "",
+i = 0
+}
+ 
+function StringReader:New(s)
+local o = {}
+setmetatable(o, self)
+self.__index = self
+o.s = s or o.s
+return o
+end
+ 
+function StringReader:Peek()
+local i = self.i + 1
+if i <= #self.s then
+return string.sub(self.s, i, i)
+end
+return nil
+end
+ 
+function StringReader:Next()
+self.i = self.i+1
+if self.i <= #self.s then
+return string.sub(self.s, self.i, self.i)
+end
+return nil
+end
+ 
+function StringReader:All()
+return self.s
+end
+ 
+local JsonReader = {
+escapes = {
+['t'] = '\t',
+['n'] = '\n',
+['f'] = '\f',
+['r'] = '\r',
+['b'] = '\b',
+}
+}
+ 
+function JsonReader:New(s)
+local o = {}
+o.reader = StringReader:New(s)
+setmetatable(o, self)
+self.__index = self
+return o;
+end
+ 
+function JsonReader:Read()
+self:SkipWhiteSpace()
+local peek = self:Peek()
+if peek == nil then
+error(string.format(
+"Nil string: '%s'",
+self:All()))
+elseif peek == '{' then
+return self:ReadObject()
+elseif peek == '[' then
+return self:ReadArray()
+elseif peek == '"' then
+return self:ReadString()
+elseif string.find(peek, "[%+%-%d]") then
+return self:ReadNumber()
+elseif peek == 't' then
+return self:ReadTrue()
+elseif peek == 'f' then
+return self:ReadFalse()
+elseif peek == 'n' then
+return self:ReadNull()
+elseif peek == '/' then
+self:ReadComment()
+return self:Read()
+else
+return nil
+end
+end
+ 
+function JsonReader:ReadTrue()
+self:TestReservedWord{'t','r','u','e'}
+return true
+end
+ 
+function JsonReader:ReadFalse()
+self:TestReservedWord{'f','a','l','s','e'}
+return false
+end
+ 
+function JsonReader:ReadNull()
+self:TestReservedWord{'n','u','l','l'}
+return nil
+end
+ 
+function JsonReader:TestReservedWord(t)
+for i, v in ipairs(t) do
+if self:Next() ~= v then
+error(string.format(
+"Error reading '%s': %s",
+table.concat(t),
+self:All()))
+end
+end
+end
+ 
+function JsonReader:ReadNumber()
+local result = self:Next()
+local peek = self:Peek()
+while peek ~= nil and string.find(
+peek,
+"[%+%-%d%.eE]") do
+result = result .. self:Next()
+peek = self:Peek()
+end
+result = tonumber(result)
+if result == nil then
+error(string.format(
+"Invalid number: '%s'",
+result))
+else
+return result
+end
+end
+ 
+function JsonReader:ReadString()
+local result = ""
+assert(self:Next() == '"')
+while self:Peek() ~= '"' do
+local ch = self:Next()
+if ch == '\\' then
+ch = self:Next()
+if self.escapes[ch] then
+ch = self.escapes[ch]
+end
+end
+result = result .. ch
+end
+assert(self:Next() == '"')
+local fromunicode = function(m)
+return string.char(tonumber(m, 16))
+end
+return string.gsub(
+result,
+"u%x%x(%x%x)",
+fromunicode)
+end
+ 
+function JsonReader:ReadComment()
+assert(self:Next() == '/')
+local second = self:Next()
+if second == '/' then
+self:ReadSingleLineComment()
+elseif second == '*' then
+self:ReadBlockComment()
+else
+error(string.format(
+"Invalid comment: %s",
+self:All()))
+end
+end
+ 
+function JsonReader:ReadBlockComment()
+local done = false
+while not done do
+local ch = self:Next()
+if ch == '*' and self:Peek() == '/' then
+done = true
+end
+if not done and
+ch == '/' and
+self:Peek() == "*" then
+error(string.format(
+"Invalid comment: %s, '/*' illegal.",
+self:All()))
+end
+end
+self:Next()
+end
+ 
+function JsonReader:ReadSingleLineComment()
+local ch = self:Next()
+while ch ~= '\r' and ch ~= '\n' do
+ch = self:Next()
+end
+end
+ 
+function JsonReader:ReadArray()
+local result = {}
+assert(self:Next() == '[')
+local done = false
+if self:Peek() == ']' then
+done = true;
+end
+while not done do
+local item = self:Read()
+result[#result+1] = item
+self:SkipWhiteSpace()
+if self:Peek() == ']' then
+done = true
+end
+if not done then
+local ch = self:Next()
+if ch ~= ',' then
+error(string.format(
+"Invalid array: '%s' due to: '%s'",
+self:All(), ch))
+end
+end
+end
+assert(']' == self:Next())
+return result
+end
+ 
+function JsonReader:ReadObject()
+local result = {}
+assert(self:Next() == '{')
+local done = false
+if self:Peek() == '}' then
+done = true
+end
+while not done do
+local key = self:Read()
+if type(key) ~= "string" then
+error(string.format(
+"Invalid non-string object key: %s",
+key))
+end
+self:SkipWhiteSpace()
+local ch = self:Next()
+if ch ~= ':' then
+error(string.format(
+"Invalid object: '%s' due to: '%s'",
+self:All(),
+ch))
+end
+self:SkipWhiteSpace()
+local val = self:Read()
+result[key] = val
+self:SkipWhiteSpace()
+if self:Peek() == '}' then
+done = true
+end
+if not done then
+ch = self:Next()
+if ch ~= ',' then
+error(string.format(
+"Invalid array: '%s' near: '%s'",
+self:All(),
+ch))
+end
+end
+end
+assert(self:Next() == "}")
+return result
+end
+ 
+function JsonReader:SkipWhiteSpace()
+local p = self:Peek()
+while p ~= nil and string.find(p, "[%s/]") do
+if p == '/' then
+self:ReadComment()
+else
+self:Next()
+end
+p = self:Peek()
+end
+end
+ 
+function JsonReader:Peek()
+return self.reader:Peek()
+end
+ 
+function JsonReader:Next()
+return self.reader:Next()
+end
+ 
+function JsonReader:All()
+return self.reader:All()
+end
+ 
+function Encode(o)
+local writer = JsonWriter:New()
+writer:Write(o)
+return writer:ToString()
+end
+ 
+function Decode(s)
+local reader = JsonReader:New(s)
+return reader:Read()
+end
+ 
+function Null()
+return Null
+end
+-------------------- End JSON Parser ------------------------
+ 
+t.DecodeJSON = function(jsonString)
+pcall(function() warn("RbxUtility.DecodeJSON is deprecated, please use Game:GetService('HttpService'):JSONDecode() instead.") end)
+ 
+if type(jsonString) == "string" then
+return Decode(jsonString)
+end
+print("RbxUtil.DecodeJSON expects string argument!")
+return nil
+end
+ 
+t.EncodeJSON = function(jsonTable)
+pcall(function() warn("RbxUtility.EncodeJSON is deprecated, please use Game:GetService('HttpService'):JSONEncode() instead.") end)
+return Encode(jsonTable)
+end
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------Terrain Utilities Begin-----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--makes a wedge at location x, y, z
+--sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
+--returns true if made a wedge, false if the cell remains a block
+t.MakeWedge = function(x, y, z, defaultmaterial)
+return game:GetService("Terrain"):AutoWedgeCell(x,y,z)
+end
+ 
+t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, selectionParent)
+local terrain = game:GetService("Workspace"):FindFirstChild("Terrain")
+if not terrain then return end
+ 
+assert(regionToSelect)
+assert(color)
+ 
+if not type(regionToSelect) == "Region3" then
+error("regionToSelect (first arg), should be of type Region3, but is type",type(regionToSelect))
+end
+if not type(color) == "BrickColor" then
+error("color (second arg), should be of type BrickColor, but is type",type(color))
+end
+ 
+-- frequently used terrain calls (speeds up call, no lookup necessary)
+local GetCell = terrain.GetCell
+local WorldToCellPreferSolid = terrain.WorldToCellPreferSolid
+local CellCenterToWorld = terrain.CellCenterToWorld
+local emptyMaterial = Enum.CellMaterial.Empty
+ 
+-- container for all adornments, passed back to user
+local selectionContainer = Instance.new("Model")
+selectionContainer.Name = "SelectionContainer"
+selectionContainer.Archivable = false
+if selectionParent then
+selectionContainer.Parent = selectionParent
+else
+selectionContainer.Parent = game:GetService("Workspace")
+end
+ 
+local updateSelection = nil -- function we return to allow user to update selection
+local currentKeepAliveTag = nil -- a tag that determines whether adorns should be destroyed
+local aliveCounter = 0 -- helper for currentKeepAliveTag
+local lastRegion = nil -- used to stop updates that do nothing
+local adornments = {} -- contains all adornments
+local reusableAdorns = {}
+ 
+local selectionPart = Instance.new("Part")
+selectionPart.Name = "SelectionPart"
+selectionPart.Transparency = 1
+selectionPart.Anchored = true
+selectionPart.Locked = true
+selectionPart.CanCollide = false
+selectionPart.Size = Vector3.new(4.2,4.2,4.2)
+ 
+local selectionBox = Instance.new("SelectionBox")
+ 
+-- srs translation from region3 to region3int16
+local function Region3ToRegion3int16(region3)
+local theLowVec = region3.CFrame.p - (region3.Size/2) + Vector3.new(2,2,2)
+local lowCell = WorldToCellPreferSolid(terrain,theLowVec)
+ 
+local theHighVec = region3.CFrame.p + (region3.Size/2) - Vector3.new(2,2,2)
+local highCell = WorldToCellPreferSolid(terrain, theHighVec)
+ 
+local highIntVec = Vector3int16.new(highCell.x,highCell.y,highCell.z)
+local lowIntVec = Vector3int16.new(lowCell.x,lowCell.y,lowCell.z)
+ 
+return Region3int16.new(lowIntVec,highIntVec)
+end
+ 
+-- helper function that creates the basis for a selection box
+function createAdornment(theColor)
+local selectionPartClone = nil
+local selectionBoxClone = nil
+ 
+if #reusableAdorns > 0 then
+selectionPartClone = reusableAdorns[1]["part"]
+selectionBoxClone = reusableAdorns[1]["box"]
+table.remove(reusableAdorns,1)
+ 
+selectionBoxClone.Visible = true
+else
+selectionPartClone = selectionPart:Clone()
+selectionPartClone.Archivable = false
+ 
+selectionBoxClone = selectionBox:Clone()
+selectionBoxClone.Archivable = false
+ 
+selectionBoxClone.Adornee = selectionPartClone
+selectionBoxClone.Parent = selectionContainer
+ 
+selectionBoxClone.Adornee = selectionPartClone
+ 
+selectionBoxClone.Parent = selectionContainer
+end
+ 
+if theColor then
+selectionBoxClone.Color = theColor
+end
+ 
+return selectionPartClone, selectionBoxClone
+end
+ 
+-- iterates through all current adornments and deletes any that don't have latest tag
+function cleanUpAdornments()
+for cellPos, adornTable in pairs(adornments) do
+ 
+if adornTable.KeepAlive ~= currentKeepAliveTag then -- old news, we should get rid of this
+adornTable.SelectionBox.Visible = false
+table.insert(reusableAdorns,{part = adornTable.SelectionPart, box = adornTable.SelectionBox})
+adornments[cellPos] = nil
+end
+end
+end
+ 
+-- helper function to update tag
+function incrementAliveCounter()
+aliveCounter = aliveCounter + 1
+if aliveCounter > 1000000 then
+aliveCounter = 0
+end
+return aliveCounter
+end
+ 
+-- finds full cells in region and adorns each cell with a box, with the argument color
+function adornFullCellsInRegion(region, color)
+local regionBegin = region.CFrame.p - (region.Size/2) + Vector3.new(2,2,2)
+local regionEnd = region.CFrame.p + (region.Size/2) - Vector3.new(2,2,2)
+ 
+local cellPosBegin = WorldToCellPreferSolid(terrain, regionBegin)
+local cellPosEnd = WorldToCellPreferSolid(terrain, regionEnd)
+ 
+currentKeepAliveTag = incrementAliveCounter()
+for y = cellPosBegin.y, cellPosEnd.y do
+for z = cellPosBegin.z, cellPosEnd.z do
+for x = cellPosBegin.x, cellPosEnd.x do
+local cellMaterial = GetCell(terrain, x, y, z)
+ 
+if cellMaterial ~= emptyMaterial then
+local cframePos = CellCenterToWorld(terrain, x, y, z)
+local cellPos = Vector3int16.new(x,y,z)
+ 
+local updated = false
+for cellPosAdorn, adornTable in pairs(adornments) do
+if cellPosAdorn == cellPos then
+adornTable.KeepAlive = currentKeepAliveTag
+if color then
+adornTable.SelectionBox.Color = color
+end
+updated = true
+break
+end
+end
+ 
+if not updated then
+local selectionPart, selectionBox = createAdornment(color)
+selectionPart.Size = Vector3.new(4,4,4)
+selectionPart.CFrame = CFrame.new(cframePos)
+local adornTable = {SelectionPart = selectionPart, SelectionBox = selectionBox, KeepAlive = currentKeepAliveTag}
+adornments[cellPos] = adornTable
+end
+end
+end
+end
+end
+cleanUpAdornments()
+end
+ 
+ 
+------------------------------------- setup code ------------------------------
+lastRegion = regionToSelect
+ 
+if selectEmptyCells then -- use one big selection to represent the area selected
+local selectionPart, selectionBox = createAdornment(color)
+ 
+selectionPart.Size = regionToSelect.Size
+selectionPart.CFrame = regionToSelect.CFrame
+ 
+adornments.SelectionPart = selectionPart
+adornments.SelectionBox = selectionBox
+ 
+updateSelection =
+function (newRegion, color)
+if newRegion and newRegion ~= lastRegion then
+lastRegion = newRegion
+selectionPart.Size = newRegion.Size
+selectionPart.CFrame = newRegion.CFrame
+end
+if color then
+selectionBox.Color = color
+end
+end
+else -- use individual cell adorns to represent the area selected
+adornFullCellsInRegion(regionToSelect, color)
+updateSelection =
+function (newRegion, color)
+if newRegion and newRegion ~= lastRegion then
+lastRegion = newRegion
+adornFullCellsInRegion(newRegion, color)
+end
+end
+ 
+end
+ 
+local destroyFunc = function()
+updateSelection = nil
+if selectionContainer then selectionContainer:Destroy() end
+adornments = nil
+end
+ 
+return updateSelection, destroyFunc
+end
+ 
+-----------------------------Terrain Utilities End-----------------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------Signal class begin------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--[[
+A 'Signal' object identical to the internal RBXScriptSignal object in it's public API and semantics. This function
+can be used to create "custom events" for user-made code.
+API:
+Method :connect( function handler )
+Arguments: The function to connect to.
+Returns: A new connection object which can be used to disconnect the connection
+Description: Connects this signal to the function specified by |handler|. That is, when |fire( ... )| is called for
+the signal the |handler| will be called with the arguments given to |fire( ... )|. Note, the functions
+connected to a signal are called in NO PARTICULAR ORDER, so connecting one function after another does
+NOT mean that the first will be called before the second as a result of a call to |fire|.
+ 
+Method :disconnect()
+Arguments: None
+Returns: None
+Description: Disconnects all of the functions connected to this signal.
+ 
+Method :fire( ... )
+Arguments: Any arguments are accepted
+Returns: None
+Description: Calls all of the currently connected functions with the given arguments.
+ 
+Method :wait()
+Arguments: None
+Returns: The arguments given to fire
+Description: This call blocks until
+]]
+ 
+function t.CreateSignal()
+local this = {}
+ 
+local mBindableEvent = Instance.new('BindableEvent')
+local mAllCns = {} --all connection objects returned by mBindableEvent::connect
+ 
+--main functions
+function this:connect(func)
+if self ~= this then error("connect must be called with `:`, not `.`", 2) end
+if type(func) ~= 'function' then
+error("Argument #1 of connect must be a function, got a "..type(func), 2)
+end
+local cn = mBindableEvent.Event:Connect(func)
+mAllCns[cn] = true
+local pubCn = {}
+function pubCn:disconnect()
+cn:Disconnect()
+mAllCns[cn] = nil
+end
+pubCn.Disconnect = pubCn.disconnect
+ 
+return pubCn
+end
+ 
+function this:disconnect()
+if self ~= this then error("disconnect must be called with `:`, not `.`", 2) end
+for cn, _ in pairs(mAllCns) do
+cn:Disconnect()
+mAllCns[cn] = nil
+end
+end
+ 
+function this:wait()
+if self ~= this then error("wait must be called with `:`, not `.`", 2) end
+return mBindableEvent.Event:Wait()
+end
+ 
+function this:fire(...)
+if self ~= this then error("fire must be called with `:`, not `.`", 2) end
+mBindableEvent:Fire(...)
+end
+ 
+this.Connect = this.connect
+this.Disconnect = this.disconnect
+this.Wait = this.wait
+this.Fire = this.fire
+ 
+return this
+end
+ 
+------------------------------------------------- Sigal class End ------------------------------------------------------
+ 
+ 
+ 
+ 
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------Create Function Begins---------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--[[
+A "Create" function for easy creation of Roblox instances. The function accepts a string which is the classname of
+the object to be created. The function then returns another function which either accepts accepts no arguments, in
+which case it simply creates an object of the given type, or a table argument that may contain several types of data,
+in which case it mutates the object in varying ways depending on the nature of the aggregate data. These are the
+type of data and what operation each will perform:
+1) A string key mapping to some value:
+Key-Value pairs in this form will be treated as properties of the object, and will be assigned in NO PARTICULAR
+ORDER. If the order in which properties is assigned matter, then they must be assigned somewhere else than the
+|Create| call's body.
+ 
+2) An integral key mapping to another Instance:
+Normal numeric keys mapping to Instances will be treated as children if the object being created, and will be
+parented to it. This allows nice recursive calls to Create to create a whole hierarchy of objects without a
+need for temporary variables to store references to those objects.
+ 
+3) A key which is a value returned from Create.Event( eventname ), and a value which is a function function
+The Create.E( string ) function provides a limited way to connect to signals inside of a Create hierarchy
+for those who really want such a functionality. The name of the event whose name is passed to
+Create.E( string )
+ 
+4) A key which is the Create function itself, and a value which is a function
+The function will be run with the argument of the object itself after all other initialization of the object is
+done by create. This provides a way to do arbitrary things involving the object from withing the create
+hierarchy.
+Note: This function is called SYNCHRONOUSLY, that means that you should only so initialization in
+it, not stuff which requires waiting, as the Create call will block until it returns. While waiting in the
+constructor callback function is possible, it is probably not a good design choice.
+Note: Since the constructor function is called after all other initialization, a Create block cannot have two
+constructor functions, as it would not be possible to call both of them last, also, this would be unnecessary.
+ 
+ 
+Some example usages:
+ 
+A simple example which uses the Create function to create a model object and assign two of it's properties.
+local model = Create'Model'{
+Name = 'A New model',
+Parent = game.Workspace,
+}
+ 
+ 
+An example where a larger hierarchy of object is made. After the call the hierarchy will look like this:
+Model_Container
+|-ObjectValue
+| |
+| `-BoolValueChild
+`-IntValue
+ 
+local model = Create'Model'{
+Name = 'Model_Container',
+Create'ObjectValue'{
+Create'BoolValue'{
+Name = 'BoolValueChild',
+},
+},
+Create'IntValue'{},
+}
+ 
+ 
+An example using the event syntax:
+ 
+local part = Create'Part'{
+[Create.E'Touched'] = function(part)
+print("I was touched by "..part.Name)
+end,
+}
+ 
+ 
+An example using the general constructor syntax:
+ 
+local model = Create'Part'{
+[Create] = function(this)
+print("Constructor running!")
+this.Name = GetGlobalFoosAndBars(this)
+end,
+}
+ 
+ 
+Note: It is also perfectly legal to save a reference to the function returned by a call Create, this will not cause
+any unexpected behavior. EG:
+local partCreatingFunction = Create'Part'
+local part = partCreatingFunction()
+]]
+ 
+--the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
+--will be created in several steps rather than as a single function declaration.
+local function Create_PrivImpl(objectType)
+if type(objectType) ~= 'string' then
+error("Argument of Create must be a string", 2)
+end
+--return the proxy function that gives us the nice Create'string'{data} syntax
+--The first function call is a function call using Lua's single-string-argument syntax
+--The second function call is using Lua's single-table-argument syntax
+--Both can be chained together for the nice effect.
+return function(dat)
+--default to nothing, to handle the no argument given case
+dat = dat or {}
+ 
+--make the object to mutate
+local obj = Instance.new(objectType)
+local parent = nil
+ 
+--stored constructor function to be called after other initialization
+local ctor = nil
+ 
+for k, v in pairs(dat) do
+--add property
+if type(k) == 'string' then
+if k == 'Parent' then
+-- Parent should always be set last, setting the Parent of a new object
+-- immediately makes performance worse for all subsequent property updates.
+parent = v
+else
+obj[k] = v
+end
+ 
+ 
+--add child
+elseif type(k) == 'number' then
+if type(v) ~= 'userdata' then
+error("Bad entry in Create body: Numeric keys must be paired with children, got a: "..type(v), 2)
+end
+v.Parent = obj
+ 
+ 
+--event connect
+elseif type(k) == 'table' and k.__eventname then
+if type(v) ~= 'function' then
+error("Bad entry in Create body: Key `[Create.E\'"..k.__eventname.."\']` must have a function value\
+got: "..tostring(v), 2)
+end
+obj[k.__eventname]:connect(v)
+ 
+ 
+--define constructor function
+elseif k == t.Create then
+if type(v) ~= 'function' then
+error("Bad entry in Create body: Key `[Create]` should be paired with a constructor function, \
+got: "..tostring(v), 2)
+elseif ctor then
+--ctor already exists, only one allowed
+error("Bad entry in Create body: Only one constructor function is allowed", 2)
+end
+ctor = v
+ 
+ 
+else
+error("Bad entry ("..tostring(k).." => "..tostring(v)..") in Create body", 2)
+end
+end
+ 
+--apply constructor function if it exists
+if ctor then
+ctor(obj)
+end
+ 
+if parent then
+obj.Parent = parent
+end
+ 
+--return the completed object
+return obj
+end
+end
+ 
+--now, create the functor:
+t.Create = setmetatable({}, {__call = function(tb, ...) return Create_PrivImpl(...) end})
+ 
+--and create the "Event.E" syntax stub. Really it's just a stub to construct a table which our Create
+--function can recognize as special.
+t.Create.E = function(eventName)
+return {__eventname = eventName}
+end
+ 
+-------------------------------------------------Create function End----------------------------------------------------
+ 
+ 
+ 
+ 
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------Documentation Begin-----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+ 
+t.Help =
+function(funcNameOrFunc)
+--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
+if funcNameOrFunc == "DecodeJSON" or funcNameOrFunc == t.DecodeJSON then
+return "Function DecodeJSON. " ..
+"Arguments: (string). " ..
+"Side effect: returns a table with all parsed JSON values"
+end
+if funcNameOrFunc == "EncodeJSON" or funcNameOrFunc == t.EncodeJSON then
+return "Function EncodeJSON. " ..
+"Arguments: (table). " ..
+"Side effect: returns a string composed of argument table in JSON data format"
+end
+if funcNameOrFunc == "MakeWedge" or funcNameOrFunc == t.MakeWedge then
+return "Function MakeWedge. " ..
+"Arguments: (x, y, z, [default material]). " ..
+"Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if "..
+"parameter is provided, if not sets cell x, y, z to be whatever material it previously was. "..
+"Returns true if made a wedge, false if the cell remains a block "
+end
+if funcNameOrFunc == "SelectTerrainRegion" or funcNameOrFunc == t.SelectTerrainRegion then
+return "Function SelectTerrainRegion. " ..
+"Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). " ..
+"Description: Selects all terrain via a series of selection boxes within the regionToSelect " ..
+"(this should be a region3 value). The selection box color is detemined by the color argument " ..
+"(should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional)." ..
+"SelectEmptyCells is bool, when true will select all cells in the " ..
+"region, otherwise we only select non-empty cells. Returns a function that can update the selection," ..
+"arguments to said function are a new region3 to select, and the adornment color (color arg is optional). " ..
+"Also returns a second function that takes no arguments and destroys the selection"
+end
+if funcNameOrFunc == "CreateSignal" or funcNameOrFunc == t.CreateSignal then
+return "Function CreateSignal. "..
+"Arguments: None. "..
+"Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class "..
+"used for events in Objects, but is a Lua-side object so it can be used to create custom events in"..
+"Lua code. "..
+"Methods of the Signal object: :connect, :wait, :fire, :disconnect. "..
+"For more info you can pass the method name to the Help function, or view the wiki page "..
+"for this library. EG: Help('Signal:connect')."
+end
+if funcNameOrFunc == "Signal:connect" then
+return "Method Signal:connect. "..
+"Arguments: (function handler). "..
+"Return: A connection object which can be used to disconnect the connection to this handler. "..
+"Description: Connectes a handler function to this Signal, so that when |fire| is called the "..
+"handler function will be called with the arguments passed to |fire|."
+end
+if funcNameOrFunc == "Signal:wait" then
+return "Method Signal:wait. "..
+"Arguments: None. "..
+"Returns: The arguments passed to the next call to |fire|. "..
+"Description: This call does not return until the next call to |fire| is made, at which point it "..
+"will return the values which were passed as arguments to that |fire| call."
+end
+if funcNameOrFunc == "Signal:fire" then
+return "Method Signal:fire. "..
+"Arguments: Any number of arguments of any type. "..
+"Returns: None. "..
+"Description: This call will invoke any connected handler functions, and notify any waiting code "..
+"attached to this Signal to continue, with the arguments passed to this function. Note: The calls "..
+"to handlers are made asynchronously, so this call will return immediately regardless of how long "..
+"it takes the connected handler functions to complete."
+end
+if funcNameOrFunc == "Signal:disconnect" then
+return "Method Signal:disconnect. "..
+"Arguments: None. "..
+"Returns: None. "..
+"Description: This call disconnects all handlers attacched to this function, note however, it "..
+"does NOT make waiting code continue, as is the behavior of normal Roblox events. This method "..
+"can also be called on the connection object which is returned from Signal:connect to only "..
+"disconnect a single handler, as opposed to this method, which will disconnect all handlers."
+end
+if funcNameOrFunc == "Create" then
+return "Function Create. "..
+"Arguments: A table containing information about how to construct a collection of objects. "..
+"Returns: The constructed objects. "..
+"Descrition: Create is a very powerfull function, whose description is too long to fit here, and "..
+"is best described via example, please see the wiki page for a description of how to use it."
+end
+end
+ 
+--------------------------------------------Documentation Ends----------------------------------------------------------
+ 
+return t
+end
 function sandbox(var,func)
 	local env = getfenv(func)
 	local newenv = setmetatable({},{
@@ -5138,62 +6344,158 @@ for i,v in pairs(Model0:GetChildren()) do
                 v.Locked = true
 		v.Anchored = false
                 v.CanCollide = false
-		v.Transparency = 1
 	end
 end
 
+local BanishMode = 1
 
-if bytexfesettings.usinghats == true then
 
-mewhenhatid = game:GetObjects("rbxassetid://"..tostring(bytexfesettings.bhatid))[1].Name
 
-Character = game.Players.LocalPlayer.Character
 
-local accessory = Character:FindFirstChild(mewhenhatid)
-local RightArm = Part1
 
-local handle = accessory:FindFirstChild("Handle")
 
-for _, v in ipairs(handle:GetChildren()) do
-    if v:IsA("Weld") or v:IsA("Motor6D") or v:IsA("WeldConstraint") --[[or v:IsA("Mesh") or v:IsA("SpecialMesh")]] then
-        v:Destroy()
+
+-- hat sync --
+local hatOffset = CFrame.new(0, -3, 0) * CFrame.Angles(math.rad(85), math.rad(90), math.rad(0))
+local targetMeshId = "94522224942661"
+
+task.spawn(function()
+    local _player = game:GetService("Players").LocalPlayer
+    local _char = _player.Character or _player.CharacterAdded:Wait()
+    local _rs = game:GetService("RunService")
+    
+    local targetHandle = nil
+    local trueHandle = nil
+
+
+    while not targetHandle do
+        for _, acc in pairs(_char:GetChildren()) do
+            if acc:IsA("Accessory") then
+                local handle = acc:FindFirstChild("Handle")
+                if handle then
+                    local mesh = handle:FindFirstChildOfClass("SpecialMesh")
+                    local currentId = ""
+                    if handle:IsA("MeshPart") then currentId = handle.MeshId
+                    elseif mesh then currentId = mesh.MeshId end
+                    
+                    if string.find(tostring(currentId), targetMeshId) then
+                        targetHandle = handle
+                        break
+                    end
+                end
+            end
+        end
+        if not targetHandle then task.wait(0.5) end
     end
-end
 
-local grip = Instance.new("Part")
-grip.Name = "AccessoryGrip"
-grip.Size = Vector3.new(0.2, 0.2, 0.2)
-grip.Transparency = 1
-grip.CanCollide = false
-grip.Anchored = false
-grip.Parent = Character
+    targetHandle:BreakJoints() 
+    targetHandle.CanCollide = false
+    targetHandle.Massless = true
 
-local gripWeld = Instance.new("Motor6D")
-gripWeld.Name = "GripWeld"
-gripWeld.Part0 = RightArm
-gripWeld.Part1 = grip
-gripWeld.C0 = bytexfesettings.bcframele
-gripWeld.Parent = grip
 
-local alignPos = Instance.new("AlignPosition")
-alignPos.Attachment0 = Instance.new("Attachment", handle)
-alignPos.Attachment1 = Instance.new("Attachment", grip)
-alignPos.RigidityEnabled = false
-alignPos.Responsiveness = 200
-alignPos.MaxForce = 100000
-alignPos.Parent = handle
+    while not trueHandle do
+        for _, child in pairs(_char:GetChildren()) do
+            if child:IsA("Model") then
+                local th = child:FindFirstChild("TrueHandle")
+                if th then
+                    trueHandle = th
+ 
+                    for _, p in pairs(child:GetDescendants()) do
+                        if p:IsA("BasePart") then p.Transparency = 1 end
+                    end
+                    break
+                end
+            end
+        end
+        if not trueHandle then task.wait(0.5) end
+    end
 
-local alignOri = Instance.new("AlignOrientation")
-alignOri.Attachment0 = alignPos.Attachment0
-alignOri.Attachment1 = alignPos.Attachment1
-alignOri.MaxTorque = 100000
-alignOri.Responsiveness = 200
-alignOri.Parent = handle
+    _rs.Heartbeat:Connect(function()
+        if targetHandle and trueHandle and trueHandle.Parent then
+            
+            targetHandle.CFrame = trueHandle.CFrame * hatOffset
+            
 
-handle.Parent = workspace
-task.wait()
-handle.Parent = accessory
-end
+            targetHandle.Velocity = Vector3.new(0, 35, 0)
+            pcall(function()
+                targetHandle.AssemblyLinearVelocity = Vector3.new(0, 35, 0)
+            end)
+        end
+    end)
+end)
+
+-- hat sync2 --
+local hatOffset = CFrame.new(0, -8.5, 0.3) * CFrame.Angles(math.rad(180), math.rad(-5), math.rad(0))
+local targetMeshId = "2649319534"
+
+task.spawn(function()
+    local _player = game:GetService("Players").LocalPlayer
+    local _char = _player.Character or _player.CharacterAdded:Wait()
+    local _rs = game:GetService("RunService")
+    
+    local targetHandle = nil
+    local trueHandle = nil
+
+
+    while not targetHandle do
+        for _, acc in pairs(_char:GetChildren()) do
+            if acc:IsA("Accessory") then
+                local handle = acc:FindFirstChild("Handle")
+                if handle then
+                    local mesh = handle:FindFirstChildOfClass("SpecialMesh")
+                    local currentId = ""
+                    if handle:IsA("MeshPart") then currentId = handle.MeshId
+                    elseif mesh then currentId = mesh.MeshId end
+                    
+                    if string.find(tostring(currentId), targetMeshId) then
+                        targetHandle = handle
+                        break
+                    end
+                end
+            end
+        end
+        if not targetHandle then task.wait(0.5) end
+    end
+
+    targetHandle:BreakJoints() 
+    targetHandle.CanCollide = false
+    targetHandle.Massless = true
+
+
+    while not trueHandle do
+        for _, child in pairs(_char:GetChildren()) do
+            if child:IsA("Model") then
+                local th = child:FindFirstChild("TrueHandle")
+                if th then
+                    trueHandle = th
+ 
+                    for _, p in pairs(child:GetDescendants()) do
+                        if p:IsA("BasePart") then p.Transparency = 1 end
+                    end
+                    break
+                end
+            end
+        end
+        if not trueHandle then task.wait(0.5) end
+    end
+
+    _rs.Heartbeat:Connect(function()
+        if targetHandle and trueHandle and trueHandle.Parent then
+            
+            targetHandle.CFrame = trueHandle.CFrame * hatOffset
+            
+
+            targetHandle.Velocity = Vector3.new(0, 35, 0)
+            pcall(function()
+                targetHandle.AssemblyLinearVelocity = Vector3.new(0, 35, 0)
+            end)
+        end
+    end)
+end)
+
+
+
+
 
 
 plr = game:GetService("Players").LocalPlayer
@@ -5222,18 +6524,18 @@ cf = CFrame.new
 ceuler = CFrame.fromEulerAnglesXYZ
 
 local muter = false
-local ORGID = 1873219898
 local ORVOL = 1.15
 local ORPIT = 1.01
-local kan = Instance.new("Sound",plr.PlayerGui)
-kan.Volume = 1.15
-kan.TimePosition = 0
-kan.PlaybackSpeed = 1.01
-kan.Pitch = 1.01
-kan.SoundId = "rbxassetid://1873219898" --525289865,1873219898,381991270
+local kan = Instance.new("Sound", plr.PlayerGui)
 kan.Name = "nepnepnep"
+kan.SoundId = getcustomasset("ToryAssets/Neptunian V.mp3") 
+kan.Volume = ORVOL
+kan.PlaybackSpeed = ORPIT
+kan.Pitch = ORPIT
 kan.Looped = true
+kan.TimePosition = 0
 kan:Play()
+
 
 --------------------------- GUI STUFF
 local basgui = it("GuiMain")
@@ -5289,7 +6591,7 @@ ned.TextColor3 = BrickColor.new("Royal purple").Color
 ned.TextStrokeColor3 = BrickColor.new("Cyan").Color
 ned.TextScaled = true
 ned.TextStrokeTransparency = 0
-ned.Text = "NEPTUNIAN V"
+ned.Text = "Yeh! Im Tory"
 ned.TextSize = 24
 ned.Rotation = 1
 --ned.TextXAlignment = "Right"
@@ -5695,8 +6997,8 @@ function CreateWeld(Parent, Part0, Part1, C0, C1)
   return Weld
 end
 
-Player=game.Players.LocalPlayer
-Character=Player.Character 
+Player=game:GetService("Players").LocalPlayer
+Character=Player.Character
 PlayerGui=Player.PlayerGui 
 Backpack=Player.Backpack 
 Torso=Character.Torso 
@@ -5748,6 +7050,7 @@ local sine = 0
 local change = 1
 player=nil 
 
+mouse=Player:GetMouse()
 --save shoulders 
 RSH, LSH=nil, nil 
 --welds 
@@ -5787,7 +7090,7 @@ Stats.Parent=Character
 local Atk=Instance.new("NumberValue")
 Atk.Name="Damage"
 Atk.Parent=Stats
-Atk.Value=1
+Atk.Value=0
 local Def=Instance.new("NumberValue")
 Def.Name="Defense"
 Def.Parent=Stats
@@ -6039,12 +7342,182 @@ end
  
 
 function Damagefunc(Part, hit, minim, maxim, knockback, Type, Property, Delay, HitSound, HitPitch)
+  if hit.Parent == nil then
+    return
+  end
+  if hit.Parent:FindFirstChild("Invincible") then
+    return
+  end
+  local h = hit.Parent:FindFirstChildOfClass("Humanoid")
+  for _, v in pairs(hit.Parent:children()) do
+    if v:IsA("Humanoid") then
+      h = v
+      h.MaxHealth = 100
+    end
+  end
+  local plr = game:GetService("Players").LocalPlayer
+  if h ~= nil and hit.Parent.Name ~= plr.Name and hit.Parent:FindFirstChild("Torso") ~= nil or h ~= nil and hit.Parent.Name ~= plr.Name and hit.Parent:FindFirstChild("UpperTorso") ~= nil then
+    if hit.Parent:findFirstChild("DebounceHit") ~= nil and hit.Parent.DebounceHit.Value == true then
+      return
+    end
+    if HitSound ~= nil and HitPitch ~= nil then
+      CFuncs.Sound.Create(HitSound, hit, 1, HitPitch)
+    end
+    local Damage = math.random(minim, maxim)
+    local blocked = false
+    local block = hit.Parent:findFirstChild("Block")
+    if block ~= nil and block.className == "IntValue" and block.Value > 0 then
+      blocked = true
+      block.Value = block.Value - 1
+    end
+    local isFakeKill = false
+    h.MaxHealth = 100
+    if blocked == false then
+      local nextHealth = h.Health - Damage
+      if nextHealth <= 0 and h.Parent.Name ~= "Hologram" then
+        h.Health = 1
+        isFakeKill = true
+        local inv = Instance.new("BoolValue")
+        inv.Name = "Invincible"
+        inv.Parent = hit.Parent
+        game:GetService("Debris"):AddItem(inv, 2)
+        dmg(h.Parent)
+        coroutine.wrap(function()
+            wait() 
+            if h and h.Parent then
+                h.Health = h.MaxHealth
+            end
+        end)()
+      else
+        h.Health = nextHealth
+      end
+      ShowDamage(Part.CFrame * CFrame.new(0, 0, Part.Size.Z / 2).p + Vector3.new(0, 1.5, 0), -Damage, 1.5, Part.BrickColor.Color)
+    else
+      local nextHealth = h.Health - (Damage / 2)
+      if nextHealth <= 0 and h.Parent.Name ~= "Hologram" then
+        h.Health = 1
+        isFakeKill = true
+        local inv = Instance.new("BoolValue")
+        inv.Name = "Invincible"
+        inv.Parent = hit.Parent
+        game:GetService("Debris"):AddItem(inv, 2)
+        dmg(h.Parent)
+        coroutine.wrap(function()
+            wait()
+            if h and h.Parent then h.Health = h.MaxHealth end
+        end)()
+      else
+        h.Health = nextHealth
+      end
+      ShowDamage(Part.CFrame * CFrame.new(0, 0, Part.Size.Z / 2).p + Vector3.new(0, 1.5, 0), -Damage, 1.5, Part.BrickColor.Color)
+    end
+    if isFakeKill then
+        local debounce = Instance.new("BoolValue")
+        debounce.Name = "DebounceHit"
+        debounce.Parent = hit.Parent
+        debounce.Value = true
+        game:GetService("Debris"):AddItem(debounce, Delay)
+        local c = Instance.new("ObjectValue")
+        c.Name = "creator"
+        c.Value = plr
+        c.Parent = h
+        game:GetService("Debris"):AddItem(c, 0.5)
+        return 
+    end
+    if Type == "Knockdown" then
+      local hum = hit.Parent.Humanoid
+      hum.PlatformStand = true
+      coroutine.resume(coroutine.create(function(HHumanoid)
+        swait(1)
+        if HHumanoid then HHumanoid.PlatformStand = false end
+      end), hum)
+    elseif Type == "Leech" then
+      if hum ~= nil and hum.Health < hum.MaxHealth then
+          hum.Health = hum.Health + 10
+      end
+    elseif Type == "UpKnock" then
+      local hum = hit.Parent.Humanoid
+      hum.PlatformStand = true
+      coroutine.resume(coroutine.create(function(HHumanoid)
+        swait(5)
+        if HHumanoid then HHumanoid.PlatformStand = false end
+      end), hum)
+    elseif Type == "Freeze" then
+      local targetTorso = hit.Parent:FindFirstChild("Torso") or hit.Parent:FindFirstChild("UpperTorso")
+      if targetTorso then
+          targetTorso.Anchored = true
+          coroutine.resume(coroutine.create(function(Part)
+            swait(1.5)
+            if Part then Part.Anchored = false end
+          end), targetTorso)
+      end
+    end
+    local c = Instance.new("ObjectValue")
+    c.Name = "creator"
+    c.Value = plr
+    c.Parent = h
+    game:GetService("Debris"):AddItem(c, 0.5)
+  end
+end
 
-end
+
+
+
+
 function ShowDamage(Pos, Text, Time, Color)
-  
+  local Rate = 0.1
+  local Pos = Pos or Vector3.new(0, 0, 0)
+  local Text = Text or ""
+  local Time = Time or 2
+  local Color = Color or Color3.new(1, 0, 1)
+  local EffectPart = CreatePart(workspace, "SmoothPlastic", 0, 1, BrickColor.new(Color), "Effect", Vector3.new(0, 0, 0))
+  EffectPart.Anchored = true
+  local BillboardGui = Create("BillboardGui")({
+    Size = UDim2.new(3, 0, 3, 0),
+    Adornee = EffectPart,
+    Parent = EffectPart
+  })
+  local TextLabel = Create("TextLabel")({
+    BackgroundTransparency = 1,
+    Size = UDim2.new(1, 0, 1, 0),
+    Text = Text,
+    TextColor3 = Color3.new(1,1,1),
+    TextStrokeColor3 = Color3.new(0,0,0),
+    TextStrokeTransparency = 0.25,
+    TextScaled = true,
+    Font = Enum.Font.Fantasy,
+    TextSize = 24,
+    Parent = BillboardGui
+  })
+  game.Debris:AddItem(EffectPart, Time + 0.1)
+  EffectPart.Parent = game:GetService("Workspace")
+  delay(0, function()
+    local Frames = Time / Rate
+    for Frame = 1, Frames do
+      swait(Rate)
+      local Percent = Frame / Frames
+      TextLabel.Text = Text
+      EffectPart.CFrame = CFrame.new(Pos) + Vector3.new(0, Percent*2, 0)
+    end
+    for Frame = 1, Frames do
+      swait(Rate)
+      local Percent = Frame / Frames
+      TextLabel.Text = Text
+    end
+    for Frame = 1, Frames do
+      swait(Rate)
+      local Percent = Frame / Frames
+      TextLabel.TextTransparency = Percent
+      TextLabel.Text = Text
+      TextLabel.TextStrokeTransparency = Percent
+    end
+    if EffectPart and EffectPart.Parent then
+      EffectPart:Destroy()
+    end
+  end)
 end
-function MagniDamage(Part, magni, mindam, maxdam, knock, Type,Sound)
+
+function MagniDamage(Part, magni, mindam, maxdam, knock, Type, Sound)
   for _, c in pairs(workspace:children()) do
     local hum = c:findFirstChildOfClass("Humanoid")
     if hum ~= nil then
@@ -6052,16 +7525,16 @@ function MagniDamage(Part, magni, mindam, maxdam, knock, Type,Sound)
       if head ~= nil then
         local targ = head.Position - Part.Position
         local mag = targ.magnitude
-        if magni >= mag and c.Name ~= Player.Name then
-          Damagefunc(head, head, mindam, maxdam, knock, Type, RootPart, 0.1, "rbxassetid://" ..Sound, 1)
+        if magni >= mag and c.Name ~= plr.Name then
+          Damagefunc(head, head, mindam, maxdam, knock, Type, root, 0.1, "rbxassetid://" .. Sound, 1)
         end
       end
       local head = c:findFirstChild("UpperTorso")
       if head ~= nil then
         local targ = head.Position - Part.Position
         local mag = targ.magnitude
-        if magni >= mag and c.Name ~= Player.Name then
-          Damagefunc(head, head, mindam, maxdam, knock, Type, RootPart, 0.1, "rbxassetid://" ..Sound, 1)
+        if magni >= mag and c.Name ~= plr.Name then
+          Damagefunc(head, head, mindam, maxdam, knock, Type, root, 0.1, "rbxassetid://" .. Sound, 1)
         end
       end
     end
@@ -6075,8 +7548,30 @@ end
 ----
 
 function dmg(dude)
-
+    if dude and dude.Name ~= Character.Name then
+        local val = Instance.new("BoolValue", dude)
+        val.Name = "IsHit"
+        targetted = nil
+        CFuncs["Sound"].Create("rbxassetid://62339698", char, 0.25, 0.285)
+        coroutine.resume(coroutine.create(function()
+            for i, v in pairs(dude:GetChildren()) do
+                if v:IsA("Part") or v:IsA("MeshPart") then
+                    coroutine.resume(coroutine.create(function()
+                        if typeof(sphere2) == "function" then
+                            for i = 0, 1 do
+                                sphere2(1, "Add", v.CFrame * CFrame.Angles(math.rad(math.random(-360, 360)), math.rad(math.random(-360, 360)), math.rad(math.random(-360, 360))), vt(1, 1, 1), -0.01, 10, -0.01, BrickColor.new("Royal purple"), BrickColor.new("Royal purple").Color)
+                            end
+                        end
+                        CFuncs["Sound"].Create("rbxassetid://763718160", v, 0.75, 1.1)
+                        CFuncs["Sound"].Create("rbxassetid://782353443", v, 1, 1)
+                    end))
+                    _G.Fling(dude, 1)
+                end
+            end
+        end))
+    end
 end
+
 
 function sphere(bonuspeed,type,pos,scale,value,color)
 local type = type
@@ -6223,6 +7718,320 @@ end
 rng:Destroy()
 end))
 end
+
+
+-- first vector is Position
+-- second vector is Orientation
+
+function darkspin()
+attack = true
+hum.WalkSpeed = 16
+hum.JumpPower = 0
+CFuncs["Sound"].Create("rbxassetid://1368583274", root, 4.5, 1)
+local bgui = Instance.new("BillboardGui",root)
+bgui.Size = UDim2.new(25, 0, 25, 0)
+local imgc = Instance.new("ImageLabel",bgui)
+imgc.BackgroundTransparency = 1
+imgc.ImageTransparency = 1
+imgc.Size = UDim2.new(1,0,1,0)
+imgc.Image = "rbxassetid://997291547"
+imgc.ImageColor3 = Color3.new(0,0.5,1)
+local imgc2 = imgc:Clone()
+imgc2.Parent = bgui
+imgc2.Position = UDim2.new(-0.5,0,-0.5,0)
+imgc2.Size = UDim2.new(2,0,2,0)
+imgc2.ImageColor3 = Color3.new(0.5,0,1)
+for i = 0, 1, 0.1 do
+		swait()
+bgui.Size = bgui.Size - UDim2.new(0.25, 0, 0.25, 0)
+hum.CameraOffset = vt(math.random(-10,10)/50,math.random(-10,10)/50,math.random(-10,10)/50)
+	RH.C0=clerp(RH.C0,cf(1,-0.5,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(-40),math.rad(10)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(1),math.rad(20)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0.1,0.2,-0.3)*angles(math.rad(10),math.rad(0),math.rad(50)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(5),math.rad(0),math.rad(-50)),.3)
+RW.C0=clerp(RW.C0,cf(1.25,0.5,-0.65)*angles(math.rad(100),math.rad(0),math.rad(-23)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(110),math.rad(0),math.rad(-85)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(0),math.rad(0)),.3)
+end
+imgc.ImageTransparency = 1
+hum.CameraOffset = vt(0,0,0)
+for i = 0, 9 do
+end
+CFuncs["Sound"].Create("rbxassetid://430315987", root, 1.5, 1)
+CFuncs["Sound"].Create("rbxassetid://1295446488", root, 3, 1)
+for x = 0, 20 do
+CFuncs["Sound"].Create("rbxassetid://200633281", rarmor, 1, 1.05)
+CFuncs["Sound"].Create("rbxassetid://161006195", rarmor, 1.5, 1.025)
+MagniDamage(tors, 10, 60,85, 0, "Normal",153092213)
+CFuncs["Sound"].Create("rbxassetid://200632992", rarmor, 1.25, 1)
+for i = 0, 1, 0.6 do
+		swait()
+root.CFrame = root.CFrame + root.CFrame.lookVector*6
+root.Velocity = vt(0,0,0)
+	RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0,0.5)*angles(math.rad(0),math.rad(0),math.rad(90)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(4),math.rad(0),math.rad(-60)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(90)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,0,0)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+end
+CFuncs["Sound"].Create("rbxassetid://200632992", rarmor, 1.25, 1)
+MagniDamage(tors, 10, 60,85, 0, "Normal",153092213)
+for i = 0, 1, 0.6 do
+		swait()
+root.CFrame = root.CFrame + root.CFrame.lookVector*4
+root.Velocity = vt(0,0,0)
+	RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0,0.5)*angles(math.rad(90),math.rad(0),math.rad(90)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(4),math.rad(0),math.rad(-60)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(90)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,0,0)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+end
+CFuncs["Sound"].Create("rbxassetid://200632992", rarmor, 1.25, 1)
+MagniDamage(tors, 10, 60,85, 0, "Normal",153092213)
+for i = 0, 1, 0.6 do
+		swait()
+root.CFrame = root.CFrame + root.CFrame.lookVector*5
+root.Velocity = vt(0,0,0)
+	RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0,0.5)*angles(math.rad(180),math.rad(0),math.rad(90)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(4),math.rad(0),math.rad(-60)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(90)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,0,0)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+end
+CFuncs["Sound"].Create("rbxassetid://200632992", rarmor, 1.25, 1)
+MagniDamage(tors, 10, 60,85, 0, "Normal",153092213)
+for i = 0, 1, 0.6 do
+		swait()
+root.CFrame = root.CFrame + root.CFrame.lookVector*4
+root.Velocity = vt(0,0,0)
+	RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0,0.5)*angles(math.rad(270),math.rad(0),math.rad(90)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(4),math.rad(0),math.rad(-60)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(90)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,0,0)*angles(math.rad(90),math.rad(0),math.rad(-90)),.3)
+end
+end
+hum.WalkSpeed = 0
+for i = 0, 5, 0.1 do
+		swait()
+	RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(-20)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-0.6,-0.5)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(20),math.rad(-12)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0.1,0.2,-0.35)*angles(math.rad(10),math.rad(0),math.rad(-40)),.2)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(5),math.rad(0),math.rad(40)),.2)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0)*angles(math.rad(90),math.rad(0),math.rad(110)),.2)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0)*angles(math.rad(45),math.rad(0),math.rad(-20)),.2)
+weaponweld.C1=clerp(weaponweld.C1,cf(2,0,0)*angles(math.rad(90),math.rad(0),math.rad(-90)),.2)
+end
+bgui:Destroy()
+attack = false
+hum.WalkSpeed = Speed
+hum.JumpPower = 50
+end
+
+function eightbitmegablade()
+attack = true
+hum.WalkSpeed = 0
+hum.JumpPower = 0
+CFuncs["Sound"].Create("rbxassetid://1368583274", larm, 4.5, 1.2)
+local OverCut = false
+cam.CameraSubject = Humanoid
+cam.CameraType = "Scriptable"
+coroutine.resume(coroutine.create(function()
+while true do
+swait()
+if OverCut == false then
+cam.CFrame = lerp(cam.CFrame, root.CFrame * cf(1, 1.5, -6) * ceuler(math.rad(10), math.rad(170), math.rad(-20)), 0.1)
+else
+break
+end
+end
+end))
+for i = 0, 4, 0.1 do
+swait()
+sphere2(5,"Add",larm.CFrame*CFrame.new(0,-1.5,0)*CFrame.Angles(math.rad(math.random(-360,360)),math.rad(math.random(-360,360)),math.rad(math.random(-360,360))),vt(1,1,1),-0.01,0.1,-0.01,BrickColor.new("Toothpaste"),BrickColor.new("Toothpaste").Color)
+slash(math.random(20,40)/10,5,true,"Round","Add","Out",larm.CFrame*CFrame.new(0,-1.5,0)*CFrame.Angles(math.rad(math.random(-360,360)),math.rad(math.random(-360,360)),math.rad(math.random(-360,360))),vt(0.025,0.001,0.025),-0.025,BrickColor.new("White"))
+RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6),math.rad(0),math.rad(-6)),.3)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(30),math.rad(3)),.3)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0,0)*angles(math.rad(0),math.rad(0),math.rad(-50)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-15),math.rad(5),math.rad(50)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(-13),math.rad(-40),math.rad(20)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(170),math.rad(10),math.rad(0)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(130),math.rad(0)),.3)
+end
+OverCut = true
+local orb = Instance.new("Part", char)
+orb.Anchored = true
+orb.BrickColor = BrickColor.new("Toothpaste")
+orb.CanCollide = false
+orb.FormFactor = 3
+orb.Name = "Ring"
+orb.Material = "Neon"
+orb.Size = Vector3.new(1, 1, 1)
+orb.Transparency = 0.5
+orb.TopSurface = 0
+orb.BottomSurface = 0
+local orbm = Instance.new("SpecialMesh", orb)
+orbm.MeshType = "FileMesh"
+orbm.MeshId = "rbxassetid://361629844"
+orbm.Scale = vt(30,60,60)
+orb.CFrame = root.CFrame*CFrame.new(0,50,0)
+for i = 0, 24 do
+end
+CFuncs["Sound"].Create("rbxassetid://1368637781", orb, 7.5, 1)
+local a = Instance.new("Part",workspace)
+a.Name = "Direction"	
+a.Anchored = true
+a.Transparency = 1
+a.CanCollide = false
+local ray = Ray.new(
+orb.CFrame.p,                           -- origin
+(mouse.Hit.p - orb.CFrame.p).unit * 500 -- direction
+) 
+local ignore = orb
+local hit, position, normal = workspace:FindPartOnRay(ray, ignore)
+a.BottomSurface = 10
+a.TopSurface = 10
+local distance = (orb.CFrame.p - position).magnitude
+a.Size = Vector3.new(0.1, 0.1, 0.1)
+a.CFrame = CFrame.new(orb.CFrame.p, position) * CFrame.new(0, 0, 0)
+orb.CFrame = a.CFrame
+for i = 0, 7, 0.1 do
+swait()
+ray = Ray.new(
+orb.CFrame.p,                           -- origin
+(mouse.Hit.p - orb.CFrame.p).unit * 500 -- direction
+) 
+hit, position, normal = workspace:FindPartOnRay(ray, ignore)
+distance = (orb.CFrame.p - position).magnitude
+a.CFrame = CFrame.new(orb.CFrame.p, position) * CFrame.new(0, 0, 0)
+orb.CFrame = a.CFrame
+cam.CFrame = lerp(cam.CFrame, root.CFrame * cf(20, 65, 55) * ceuler(math.rad(-20), math.rad(0), math.rad(10)), 0.2)
+RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6),math.rad(0),math.rad(-6)),.3)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(40),math.rad(3)),.3)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0,0)*angles(math.rad(0),math.rad(0),math.rad(-90)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(5),math.rad(0),math.rad(90)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(-13),math.rad(-20),math.rad(20)),.3)
+LW.C0=clerp(LW.C0,cf(-1.25,0.5,-0.5)*angles(math.rad(100),math.rad(0),math.rad(60)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(130),math.rad(0)),.3)
+end
+cam.CameraType = "Custom"
+orb.Anchored = false
+a:Destroy()
+local bv = Instance.new("BodyVelocity")
+bv.maxForce = Vector3.new(1e9, 1e9, 1e9)
+bv.velocity = orb.CFrame.lookVector*250
+bv.Parent = orb
+local hitted = false
+CFuncs["Sound"].Create("rbxassetid://466493476", orb, 7.5, 0.7)
+waveEff(2,"Add","Out",orb.CFrame*CFrame.Angles(math.rad(90),math.rad(math.random(-360,360)),0),vt(5,1,5),0.5,0.1,BrickColor.new("Cyan"))
+coroutine.resume(coroutine.create(function()
+while true do
+swait(2)
+if hitted == false and orb.Parent ~= nil then
+elseif hitted == true and orb.Parent == nil then
+break
+end
+end
+end))
+orb.Touched:connect(function(hit) 
+if hitted == false and hit.Parent ~= char then
+hitted = true
+MagniDamage(orb, 30, 72,95, 0, "Normal",153092213)
+CFuncs["Sound"].Create("rbxassetid://763717897", orb, 10, 1)
+CFuncs["Sound"].Create("rbxassetid://1295446488", orb, 9, 0.75)
+for i = 0, 24 do
+end
+orb.Anchored = true
+orb.Transparency = 1
+coroutine.resume(coroutine.create(function()
+for i = 0, 4, 0.1 do
+swait()
+hum.CameraOffset = vt(math.random(-10,10)/25,math.random(-10,10)/25,math.random(-10,10)/25)
+end
+hum.CameraOffset = vt(0,0,0)
+end))
+wait(10)
+orb:Destroy()
+end
+end)
+game:GetService("Debris"):AddItem(orb, 10)
+for i = 0, 2, 0.1 do
+swait()
+RH.C0=clerp(RH.C0,cf(1,-1,0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6),math.rad(0),math.rad(-6)),.3)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(30),math.rad(3)),.3)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.4,0)*angles(math.rad(0),math.rad(0),math.rad(-70)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(5),math.rad(0),math.rad(70)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(-13),math.rad(-40),math.rad(20)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(-80)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(130),math.rad(0)),.3)
+end
+attack = false
+hum.WalkSpeed = Speed
+hum.JumpPower = 50
+end
+
+
+
+function smack()
+attack = true
+hum.WalkSpeed = 3
+hum.JumpPower = 0
+CFuncs["Sound"].Create("rbxassetid://1368598393", rarmor, 2, 1)
+CFuncs["Sound"].Create("rbxassetid://1368583274", rarmor, 2.5, 1)
+for x = 0, 1 do
+CFuncs["Sound"].Create("rbxassetid://200633108", rarmor, 2, 1.05)
+CFuncs["Sound"].Create("rbxassetid://234365573", rarmor, 2.5, 1.025)
+for i = 0, 1, 0.6 do
+		swait()
+	RH.C0=clerp(RH.C0,cf(1,-0.5,-0.5)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(-10)),.2)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(-55),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(30),math.rad(0)),.2)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,0.25,0)*angles(math.rad(-60),math.rad(0),math.rad(-0)),.3)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(64),math.rad(0),math.rad(0)),.3)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(80)),.3)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(-60)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0 + -0 * math.sin(sine / 0.5)),math.rad(-90 + -5 * math.sin(sine / 40)),math.rad(0 + -0.1 * math.sin(sine / 0.5))),.3)
+end
+end
+wait(0.08)
+local hitb = CreateParta(m,1,1,"SmoothPlastic",BrickColor.Random())
+hitb.Anchored = true
+hitb.CFrame = root.CFrame + root.CFrame.lookVector*8
+hitb.CFrame = hitb.CFrame*CFrame.new(0,1,0)
+MagniDamage(hitb, 8, 92,158, 0, "Normal",153092213)
+for i = 0, 24 do
+end
+CFuncs["Sound"].Create("rbxassetid://313205954", root, 4,1)
+CFuncs["Sound"].Create("rbxassetid://1368637781", rarmor, 4,1)
+CFuncs["Sound"].Create("rbxassetid://763718160", rarmor, 5, 1.1)
+CFuncs["Sound"].Create("rbxassetid://782353443", rarmor, 6, 1)
+--CFuncs["Sound"].Create("rbxassetid://1548538202", rarmor, 4,1)
+for i = 0, 2, 0.1 do
+		swait()
+MagniDamage(hitb, 8, 92,158, 0, "Normal",153092213)
+hum.CameraOffset = vt(math.random(-10,10)/25,math.random(-10,10)/25,math.random(-10,10)/25)
+	RH.C0=clerp(RH.C0,cf(1,-1,-0.5)*angles(math.rad(20),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(-20),math.rad(-10)),.9)
+LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(15),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(0)),.9)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.5,0)*angles(math.rad(30),math.rad(0),math.rad(0)),.9)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(10),math.rad(0),math.rad(0)),.9)
+RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(90),math.rad(0),math.rad(70)),.9)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(10),math.rad(0),math.rad(-60)),.9)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0 + -0 * math.sin(sine / 0.5)),math.rad(-90 + -5 * math.sin(sine / 40)),math.rad(0 + -0.1 * math.sin(sine / 0.5))),.3)
+end
+hum.CameraOffset = vt(0,0,0)
+hitb:Destroy()
+attack = false
+hum.WalkSpeed = Speed
+hum.JumpPower = 50
+end
+
 
 function sphereMK(bonuspeed,FastSpeed,type,pos,x1,y1,z1,value,color,color3,outerpos)
 local type = type
@@ -6416,10 +8225,6 @@ local dashing = false
 local floatmode = false
 local OWS = hum.WalkSpeed
 local equipped = false
-Humanoid.Name = "NEPTUNIA"
-Humanoid.MaxHealth = math.huge
-Humanoid.Health = math.huge
-Instance.new("ForceField",char).Visible = false
 Humanoid.Animator.Parent = nil
 ------------------
 function equip()
@@ -7034,10 +8839,11 @@ hum.WalkSpeed = 24
 hum.JumpPower = 50
 end
 
+
+
 function superjump()
 attack = true
-hum.WalkSpeed = 0
-hum.JumpPower = 0
+hum.JumpPower = 500
 wng1a.Transparency = wng1a.Transparency - 1
 wng1b.Transparency = wng1b.Transparency - 1
 wng2a.Transparency = wng2a.Transparency - 1
@@ -7049,7 +8855,7 @@ for i = 0, 2, 0.1 do
 		swait()
 hum.CameraOffset = vt(math.random(-10,10)/100,math.random(-10,10)/100,math.random(-10,10)/100)
 root.Velocity = vt(0,0,0)
-slash(math.random(50,100)/10,5,true,"Round","Add","Out",root.CFrame*CFrame.new(0,-3,0)*CFrame.Angles(math.rad(math.random(-5,5)),math.rad(math.random(-360,360)),math.rad(math.random(-5,5))),vt(0.05,0.01,0.05),math.random(25,250)/250,BrickColor.new("White"))
+--slash(math.random(50,100)/10,5,true,"Round","Add","Out",root.CFrame*CFrame.new(0,-3,0)*CFrame.Angles(math.rad(math.random(-5,5)),math.rad(math.random(-360,360)),math.rad(math.random(-5,5))),vt(0.05,0.01,0.05),math.random(25,250)/250,BrickColor.new("White"))
 	RH.C0=clerp(RH.C0,cf(1,-0.45,-0.45)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(20)),.4)
 LH.C0=clerp(LH.C0,cf(-1,-1,0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3),math.rad(0),math.rad(40)),.4)
 RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.5,-1)*angles(math.rad(20),math.rad(0),math.rad(0)),.4)
@@ -7057,7 +8863,18 @@ Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(4),math.rad(0),math.rad(
 RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(10),math.rad(0),math.rad(40)),.4)
 LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(10),math.rad(0),math.rad(-40)),.4)
 end
-CFuncs["Sound"].Create("rbxassetid://477843807", root, 7, 1.05)
+
+		local bv = Instance.new("BodyVelocity") 
+		bv.maxForce = Vector3.new(1e9, 1e9, 1e9)
+		bv.velocity = cf(root.Position,root.CFrame*cf(0,1,-4).p).lookVector*125
+		bv.Parent = root
+		local GYRO = Instance.new("BodyGyro",root)
+		GYRO.D = 4
+		GYRO.P = 40000
+		GYRO.MaxTorque = vt(0,4000000,0)
+		GYRO.CFrame = cf(root.Position,root.CFrame*cf(0,0,-10).p)
+CFuncs["Sound"].Create("rbxassetid://477843807", root, 7, 1)
+--CFuncs["Sound"].Create("rbxassetid://477843807", root, 7, 1.05)
 local lat1 = Instance.new("Attachment",larm)
 lat1.Position = Vector3.new(1,-1,0.5)
 local lat2 = Instance.new("Attachment",larm)
@@ -7078,16 +8895,15 @@ local tl2 = tl1:Clone()
 tl2.Attachment0 = rat1
 tl2.Attachment1 = rat2
 tl2.Parent = rarm
-hum.JumpPower = 50
+hum.JumpPower = 500
 hum.Jump = true
 swait()
-hum.JumpPower = 0
+hum.JumpPower = 500
+hum.WalkSpeed = 120
 root.Velocity = vt(0,250,0) + root.CFrame.lookVector*250
 sphere2(5,"Add",root.CFrame*CFrame.Angles(math.rad(-45),0,0),vt(25,1,25),0.3,5,0.3,BrickColor.new("Royal purple"),BrickColor.new("Royal purple").Color)
 sphere2(5,"Add",root.CFrame*CFrame.Angles(math.rad(-45),0,0),vt(25,1,25),0.2,4,0.2,BrickColor.new("Cyan"),BrickColor.new("Cyan").Color)
 for i = 0, 49 do
-waveEff(math.random(10,100)/10,"Add","Out",root.CFrame*CFrame.new(0,-3,0)*CFrame.Angles(0,math.rad(math.random(-360,360)),0),vt(15,0.25,15),math.random(25,250)/250,0.25,BrickColor.new("White"))
-slash(math.random(10,100)/10,3,true,"Round","Add","Out",root.CFrame*CFrame.new(0,-3,0)*CFrame.Angles(math.rad(math.random(-10,10)),math.rad(math.random(-360,360)),math.rad(math.random(-10,10))),vt(0.01,0.01,0.01),math.random(50,500)/250,BrickColor.new("White"))
 end
 coroutine.resume(coroutine.create(function()
 for i = 0, 2, 0.1 do
@@ -7115,6 +8931,8 @@ Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-20),math.rad(0),math.ra
 RW.C0=clerp(RW.C0,cf(1.45,0.5,0.1)*angles(math.rad(-30),math.rad(0),math.rad(20)),.4)
 LW.C0=clerp(LW.C0,cf(-1.45,0.5,0.1)*angles(math.rad(-30),math.rad(0),math.rad(-20)),.4)
 end
+bv:Remove()
+GYRO:Remove()
 coroutine.resume(coroutine.create(function()
 for i = 0, 99 do
 swait()
@@ -7134,42 +8952,161 @@ hum.JumpPower = 50
 end
 ------------------
 
-mouse = game.Players.LocalPlayer:GetMouse()
 
+local scriptActive = true
+
+local function cleanUpScript()
+    if not scriptActive then return end
+    scriptActive = false
+    pcall(function() kan:Destroy() end)
+    pcall(function() basgui:Destroy() end)
+    pcall(function() cam.CameraType = Enum.CameraType.Custom end)
+    pcall(function() 
+        if plr.Character then
+            cam.CameraSubject = plr.Character:FindFirstChildOfClass("Humanoid")
+        end
+    end)
+    pcall(function()
+        for _, v in pairs(workspace:GetChildren()) do
+            local hum = v:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum.Health = hum.MaxHealth
+            end
+        end
+    end)
+end
+
+
+plr.CharacterAdded:Connect(cleanUpScript)
+char.AncestryChanged:Connect(function(_, parent)
+    if not parent then cleanUpScript() end
+end)
+if hum then 
+    hum.Died:Connect(cleanUpScript) 
+end
 
 local attacktype = 1
+
 mouse.Button1Down:connect(function()
-if equipped == true then
-  if attack == false and attacktype == 1 then
-    attacktype = 2
-    attackone()
-  elseif attack == false and attacktype == 2 then
-    attacktype = 3
-    attacktwo()
-  elseif attack == false and attacktype == 3 then
-    attacktype = 1
-    attackthree()
-  --[[elseif attack == false and attacktype == 4 then
-    attacktype = 1
-    --attackfour()]]--
-  end
-end
+    if not scriptActive then return end
+    if equipped == true then
+      if attack == false and attacktype == 1 then
+        attacktype = 2
+        attackone()
+      elseif attack == false and attacktype == 2 then
+        attacktype = 3
+        attacktwo()
+      elseif attack == false and attacktype == 3 then
+        attacktype = 1
+        attackthree()
+      end
+    end
 end)
+
 mouse.KeyDown:connect(function(k)
 if k == "f" and attack == false and equipped == false then
 	equip()
 elseif k == "f" and attack == false and equipped == true then
    unequip()
 end
+if k == "2" and attack == false then
+       hum.WalkSpeed = 40
+       Speed = 40
+       kan.Pitch = 1.00
+       kan.SoundId = getcustomasset("ToryAssets/BloodDrain_Again.mp3")
+		BanishMode = 2
+	end
+
+if k == "1" and attack == false then
+      hum.WalkSpeed = 24
+      Speed = 24
+      kan.Pitch = 1.00
+      kan.SoundId = getcustomasset("ToryAssets/Neptunian V.mp3") 
+		BanishMode = 1
+	end
+
+if k == "3" and attack == false then
+      hum.WalkSpeed = 13.8
+      Speed = 13.8
+      kan.Pitch = 1
+      kan.SoundId = getcustomasset("ToryAssets/CRAZED.mp3")
+		BanishMode = 4
+	end
+
+if k == "4" and attack == false then
+      hum.WalkSpeed = 8
+      Speed = 8
+      kan.Pitch = 1
+      kan.SoundId = getcustomasset("ToryAssets/BigBlack.mp3")
+		BanishMode = 5
+	end
+
+if k == "5" and attack == false then
+      hum.WalkSpeed = 35
+      Speed = 35
+      kan.Pitch = 1
+      kan.SoundId = getcustomasset("ToryAssets/Censored.mp3")
+		BanishMode = 7
+	end
+
 if k == "r" and attack == false then
 superjump()
 end
+if k == "v" and attack == false then
+g1 = Instance.new("BodyGyro", Root)
+g1.D = 175
+g1.P = 20000
+g1.MaxTorque = Vector3.new(0,9000,0)
+g1.CFrame = CFrame.new(playerss:FindFirstChild("HumanoidRootPart").Position,mouse.Hit.p)
+game:GetService("Debris"):AddItem(g1,.05)
+playerss:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.p) * CFrame.new(0,3.3,0)
+end
+plr.Chatted:connect(function(message)
+if message == "/sit" and attack == false then
+Speed = 0
+hum.WalkSpeed = 0
+      BanishMode = 2000
+    end
+
+if message == "/glitch" and attack == false and BanishMode == 5 then
+Speed = 8
+hum.WalkSpeed = 8
+kan.Pitch = 0.6
+      BanishMode = 1000
+      kan.Pitch = 0.6
+wait(0.02)
+      kan.Pitch = 0.5
+wait(0.02)
+kan.Pitch = 0.467
+    end
+
+if message:sub(1,3) == "id/" then
+ORGID = message:sub(4)
+kan.TimePosition = 0
+kan:Play()
+elseif message:sub(1,6) == "pitch/" then
+ORPIT = message:sub(7)
+elseif message:sub(1,4) == "vol/" then
+ORVOL = message:sub(5)
+elseif message:sub(1,5) == "skip/" then
+kan.TimePositcion = message:sub(6)
+end
+end)
 if equipped == true then
+
 if k == "z" and attack == false then
 spinnyblade()
 end
+
+
 if k == "x" and attack == false then
 eightbitmegablade()
+end
+if k == "q" and attack == false then
+smack()
+end
+if k == "e" and attack == false then
+darkspin()
 end
 if k == "c" and attack == false then
 bladespinagain()
@@ -7180,59 +9117,52 @@ muter = true
 kan.Volume = 0
 elseif k == "l" and muter == true then
 muter = false
-kan.Volume = 1.25
+if not NoSound then
+	kan.Volume = 1
 end
-end)
-plr.Chatted:connect(function(message)
-if message:sub(1,3) == "id/" then
-ORGID = message:sub(4)
-kan.TimePosition = 0
-kan:Play()
-elseif message:sub(1,6) == "pitch/" then
-ORPIT = message:sub(7)
-elseif message:sub(1,4) == "vol/" then
-ORVOL = message:sub(5)
-elseif message:sub(1,7) == "skipto/" then
-kan.TimePosition = message:sub(8)
 end
 end)
 
-idleanim=.4
+idleanim = .4
 while true do
-swait()
-if muter == false then
-kan.Volume = ORVOL
-else
-kan.Volume = 0
-end
-kan.PlaybackSpeed = ORPIT
-kan.Pitch = ORPIT
-kan.SoundId = "rbxassetid://" ..ORGID
-kan.Looped = true
-kan.Parent = plr.PlayerGui
-kan:Resume()
-techc.Rotation = techc.Rotation + 0.1
-imgl2.Rotation = imgl2.Rotation - kan.PlaybackLoudness/50
-imgl2.ImageColor3 = Color3.new(0.15 + kan.PlaybackLoudness/2500,0,0.6 + kan.PlaybackLoudness/1000)
-imgl2b.Rotation = imgl2b.Rotation + kan.PlaybackLoudness/25
-imgl2b.ImageColor3 = Color3.new(0,0.3 + kan.PlaybackLoudness/1500,0.6 + kan.PlaybackLoudness/1000)
-ned.Rotation = 0 - 2 * math.cos(sine / 24)
-ned.Position = UDim2.new(0.6,0 - 10 * math.cos(sine / 32),0.8,0 - 10 * math.cos(sine / 45))
-  sine = sine + change
-local torvel=(RootPart.Velocity*Vector3.new(1,0,1)).magnitude 
-local velderp=RootPart.Velocity.y
-hitfloor,posfloor=rayCast(RootPart.Position,(CFrame.new(RootPart.Position,RootPart.Position - Vector3.new(0,1,0))).lookVector,4,Character)
-if equipped==true or equipped==false then
-if attack==false then
-idle=idle+1
-else
-idle=0
-end
-if idle>=500 then
-if attack==false then
---Sheath()
-end
-end
+    swait()
+    if not scriptActive then break end
+    
+    if muter == false then
+        kan.Volume = ORVOL
+    else
+        kan.Volume = 0
+    end
+    
+    kan.PlaybackSpeed = ORPIT
+    kan.Pitch = ORPIT
+    kan.Looped = true
+    kan.Parent = plr.PlayerGui
+    
+    if not kan.IsPlaying then
+        pcall(function() kan:Resume() end)
+    end
+    
+    techc.Rotation = techc.Rotation + 0.1
+    imgl2.Rotation = imgl2.Rotation - kan.PlaybackLoudness / 50
+    imgl2.ImageColor3 = Color3.new(0.15 + kan.PlaybackLoudness / 2500, 0, 0.6 + kan.PlaybackLoudness / 1000)
+    imgl2b.Rotation = imgl2b.Rotation + kan.PlaybackLoudness / 25
+    imgl2b.ImageColor3 = Color3.new(0, 0.3 + kan.PlaybackLoudness / 1500, 0.6 + kan.PlaybackLoudness / 1000)
+    ned.Rotation = 0 - 2 * math.cos(sine / 24)
+    ned.Position = UDim2.new(0.6, 0 - 10 * math.cos(sine / 32), 0.8, 0 - 10 * math.cos(sine / 45))
+    
+    sine = sine + change
+    local torvel = (RootPart.Velocity * Vector3.new(1, 0, 1)).magnitude 
+    local velderp = RootPart.Velocity.y
+    hitfloor, posfloor = rayCast(RootPart.Position, (CFrame.new(RootPart.Position, RootPart.Position - Vector3.new(0, 1, 0))).lookVector, 4, Character)
+    
+    if equipped == true or equipped == false then
+        if attack == false then
+            idle = idle + 1
+        else
+            idle = 0
+        end
+        
 if RootPart.Velocity.y > 1 and hitfloor==nil then 
 Anim="Jump"
 if attack==false then
@@ -7265,7 +9195,7 @@ end
 end
 elseif torvel<1 and hitfloor~=nil then
 Anim="Idle"
-if attack==false then
+if attack==false and BanishMode == 1 then
 if equipped == false then
 RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
 LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
@@ -7275,18 +9205,139 @@ RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(
 LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(10 + 2 * math.cos(sine / 34))),.1)
 weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
 else
-RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(0 - 6 * math.cos(sine / 40)),math.rad(-6 + 2 * math.cos(sine / 20) - 6 * math.cos(sine / 40))),.1)
-LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(10 - 6 * math.cos(sine / 40)),math.rad(3 - 2 * math.cos(sine / 20) - 3 * math.cos(sine / 40))),.1)
-RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.06 * math.cos(sine / 40),-0.05 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(-20 + 6 * math.cos(sine / 40))),.1)
-Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(6),math.rad(0 - 2 * math.cos(sine / 42)),math.rad(20 - 6 * math.cos(sine / 40))),.1)
-RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 + 3 * math.cos(sine / 26)),math.rad(-20 - 3 * math.cos(sine / 24)),math.rad(20 - 5 * math.cos(sine / 34))),.1)
-LW.C0=clerp(LW.C0,cf(-1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 3 * math.cos(sine / 25)),math.rad(10 + 3 * math.cos(sine / 24)),math.rad(-10 + 5 * math.cos(sine / 34))),.1)
-weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(130),math.rad(0)),.3)
+RH.C0=clerp(RH.C0,cf(1,-0.5 + -0.266 * math.sin(sine / 20)  - 0.05 * math.sin(sine / 40),-0.25)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6 + 4 * math.cos(sine / 40)),math.rad(0 - 8 * math.cos(sine / 40)),math.rad(-10 + 5 * math.cos(sine / 20) - 6 * math.cos(sine / 40))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + -0.266 * math.sin(sine / 20) - 0.05 * math.sin(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-6 - 4 * math.cos(sine / 40)),math.rad(10 - 8 * math.cos(sine / 40)),math.rad(10 - 5 * math.cos(sine / 20) - 3 * math.cos(sine / 40))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.05 * math.cos(sine / 40),1 - 0.266 * math.cos(sine / 20))*angles(math.rad(6 + -5 * math.cos(sine / 20)),math.rad(0 + 5 * math.cos(sine / 40)),math.rad(-20 + 16 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(20 - 4 * math.sin(sine / 42)),math.rad(0 - 4 * math.sin(sine / 40)),math.rad(20 - 30 * math.sin(sine / 40))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.3 * math.sin(sine / 20),0.1)*angles(math.rad(-13 + 3 * math.cos(sine / 26)),math.rad(-20 - 3 * math.cos(sine / 24)),math.rad(20 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5 + 0.3 * math.sin(sine / 20),0.1)*angles(math.rad(-13 - 3 * math.cos(sine / 25)),math.rad(10 + 3 * math.cos(sine / 24)),math.rad(-10 + 5 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -90 * math.sin(sine / 40)),math.rad(0)),.3)
 end
 end
+if attack==false and BanishMode == 7 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-0.05 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(30 + 3 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(2),math.rad(0 - 7 * math.cos(sine / 40)),math.rad(-30 - 3 * math.cos(sine / 40))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-6 + 5 * math.cos(sine / 26)),math.rad(-10 - 6 * math.cos(sine / 24)),math.rad(13 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(10 + 2 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(190 + -600 * math.sin(sine / 40))),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-0.5 + -0.266 * math.sin(sine / 20)  - 0.05 * math.sin(sine / 40),-0.25)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6 + 4 * math.cos(sine / 40)),math.rad(0 - 8 * math.cos(sine / 40)),math.rad(-10 + 5 * math.cos(sine / 20) - 6 * math.cos(sine / 40))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + -0.266 * math.sin(sine / 20) - 0.05 * math.sin(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-6 - 4 * math.cos(sine / 40)),math.rad(10 - 8 * math.cos(sine / 40)),math.rad(10 - 5 * math.cos(sine / 20) - 3 * math.cos(sine / 40))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.05 * math.cos(sine / 40),1 - 0.266 * math.cos(sine / 20))*angles(math.rad(6 + -5 * math.cos(sine / 20)),math.rad(0 + 5 * math.cos(sine / 40)),math.rad(10 + 16 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(1+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.3 * math.sin(sine / 20),0.1)*angles(math.rad(10 + 3 * math.cos(sine / 26)),math.rad(8 - 3 * math.cos(sine / 24)),math.rad(20 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5 + 0.3 * math.sin(sine / 20),0.1)*angles(math.rad(10 - 3 * math.cos(sine / 25)),math.rad(10 + 3 * math.cos(sine / 24)),math.rad(-10 + 5 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0.5 + 5 * math.cos(sine / 30),0,-1.5)*angles(math.rad(0),math.rad(0),math.rad(190 + -800 * math.sin(sine / 40))),.3)
+end
+end
+if attack==false and BanishMode == 2 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-0.05 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(30 + 3 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-10 - 15 * math.cos(sine / 0.5)),math.rad(5 - 15 * math.cos(sine / 0.5)),math.rad(20 - 20 * math.cos(sine / 0.5))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-6 + 5 * math.cos(sine / 26)),math.rad(-10 - 6 * math.cos(sine / 24)),math.rad(13 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(10 + 2 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6 + 4 * math.cos(sine / 40)),math.rad(0 - 8 * math.cos(sine / 40)),math.rad(10 + -5 * math.cos(sine / 40) - 6 * math.cos(sine / 40))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-6 - 4 * math.cos(sine / 40)),math.rad(10 - 8 * math.cos(sine / 40)),math.rad(-10 - -5 * math.cos(sine / 40) - 3 * math.cos(sine / 40))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.06 * math.cos(sine / 40),-0.05 - 0.08 * math.cos(sine / 20))*angles(math.rad(22 + -5 * math.cos(sine / 20)),math.rad(1 + 0.5 * math.cos(sine / 40)),math.rad(-10 + 8 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-10 - 15 * math.cos(sine / 0.5)),math.rad(5 - 15 * math.cos(sine / 0.5)),math.rad(20 - 20 * math.cos(sine / 0.5))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.155 * math.sin(sine / 20),0.1)*angles(math.rad(25 + 3 * math.cos(sine / 26)),math.rad(30 - 3 * math.cos(sine / 24)),math.rad(60 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5 + 0.155 * math.sin(sine / 20),0.1)*angles(math.rad(25 - 3 * math.cos(sine / 25)),math.rad(10 + 3 * math.cos(sine / 24)),math.rad(-10 + 5 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(180 + -360 * math.sin(sine / 40)),math.rad(0)),.3)
+end
+end
+
+if attack==false and BanishMode == 4 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-0.05 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(30 + 3 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-10 - 15 * math.cos(sine / 0.5)),math.rad(5 - 15 * math.cos(sine / 0.5)),math.rad(20 - 20 * math.cos(sine / 0.5))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-6 + 5 * math.cos(sine / 26)),math.rad(-10 - 6 * math.cos(sine / 24)),math.rad(13 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(10 + 2 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-1 + -0.05 * math.cos(sine / 80)  - 0.02 * math.cos(sine / 80),-0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-6 + 4 * math.cos(sine / 80)),math.rad(10 - 8 * math.cos(sine / 80)),math.rad(10 + -5 * math.cos(sine / 80) - 6 * math.cos(sine / 80))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 80) - 0.02 * math.cos(sine / 80),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-6 - 4 * math.cos(sine / 80)),math.rad(10 - 8 * math.cos(sine / 80)),math.rad(-10 - -5 * math.cos(sine / 80) - 6 * math.cos(sine / 80))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.1 * math.cos(sine / 80),0 - 0.095 * math.cos(sine / 80),-0 - 0.122 * math.cos(sine / 40))*angles(math.rad(12.6 + -5 * math.cos(sine / 40)),math.rad(1 + 0.5 * math.cos(sine / 40)),math.rad(-10 + 8 * math.cos(sine / 80))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(18+math.random(-30,30)), math.rad(0+math.random(-30,30)), math.rad(0+math.random(-30,30))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.2 * math.sin(sine / 40),0.1)*angles(math.rad(20+math.random(-10,10)), math.rad(10+math.random(-10,10)), math.rad(12+math.random(-10,10))),.1)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5 + 0.2 * math.sin(sine / 40),0.1)*angles(math.rad(25 - 3 * math.cos(sine / 25)),math.rad(30 + 3 * math.sin(sine / 40)),math.rad(-10 + 5 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0 + -0.1 * math.sin(sine / 0.5)),math.rad(180 + -90 * math.sin(sine / 40)),math.rad(0 + -0.1 * math.sin(sine / 0.5))),.3)
+end
+end
+
+if attack==false and BanishMode == 5 then
+if equipped == false then
+kan.Pitch = 1
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-0.05 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(-30 + 10 * math.sin(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(1+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-6 + 5 * math.cos(sine / 26)),math.rad(-10 - 6 * math.cos(sine / 24)),math.rad(13 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(10 + 2 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+kan.Pitch = 1
+RH.C0=clerp(RH.C0,cf(1,-1 + -0.255 * math.cos(sine / 40)  - 0 * math.cos(sine / 40),-0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-8 + 0 * math.cos(sine / 80)),math.rad(0 - 0 * math.cos(sine / 80)),math.rad(0 + -0 * math.cos(sine / 80) - 0 * math.cos(sine / 40))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + -0.255 * math.cos(sine / 40) - 0 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-8 - 0 * math.cos(sine / 80)),math.rad(0 - 0 * math.cos(sine / 80)),math.rad(0 - -0 * math.cos(sine / 80) - 0 * math.cos(sine / 40))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf( 0 + 0 * math.cos(sine / 40),0 - 0 * math.cos(sine / 40),0 - -0.255 * math.cos(sine / 40))*angles(math.rad(1 + -0.1 * math.cos(sine / 40)),math.rad(1 + 0.1 * math.cos(sine / 40)),math.rad(-1 + 2 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(1+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.585 + -0.277 * math.sin(sine / 40),0.1)*angles(math.rad(-20+math.random(-10,10)), math.rad(10+math.random(-10,10)), math.rad(-150+math.random(-10,10))),.1)
+LW.C0=clerp(LW.C0,cf(-1.45,0.5 + -0.277 * math.sin(sine / 40),0.1)*angles(math.rad(5 - 3 * math.cos(sine / 25)),math.rad(0 + 10 * math.sin(sine / 40)),math.rad(-12 + -11 * math.cos(sine / 40))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0 + -0 * math.sin(sine / 0.5)),math.rad(-90 + -5 * math.sin(sine / 40)),math.rad(0 + -0.1 * math.sin(sine / 0.5))),.3)
+end
+end
+
+if attack==false and BanishMode == 1000 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 20)  - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-0.05 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(30 + 3 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(1+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-6 + 5 * math.cos(sine / 26)),math.rad(-10 - 6 * math.cos(sine / 24)),math.rad(13 - 5 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-13 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(10 + 2 * math.cos(sine / 34))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1 + 0 * (1+math.random(-10,10)),-1 + -0.255 * (1+math.random(-10,10))  - 0 * (1+math.random(-10,10)),-0 + 0 * (1+math.random(-10,10)))*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-8 + 0 * math.cos(sine / 80)),math.rad(0 - 0 * math.cos(sine / 80)),math.rad(0 + -0 * math.cos(sine / 80) - 0 * math.cos(sine / 40))),.1)
+LH.C0=clerp(LH.C0,cf(-1 + 0 * (1+math.random(-10,10)),-1 + -0.255 * (1+math.random(-10,10)) - 0 * (1+math.random(-10,10)),0 + 0 * (1+math.random(-10,10)))*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(-8 - 0 * math.cos(sine / 80)),math.rad(0 - 0 * math.cos(sine / 80)),math.rad(0 - -0 * math.cos(sine / 80) - 0 * math.cos(sine / 40))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf( 0 + 0 * (1+math.random(-10,10)),0 - 0 * (1+math.random(-10,10)),0 - -0.255 * (1+math.random(-2.5,10)))*angles(math.rad(1 + -0.1 * math.cos(sine / 40)),math.rad(1 + 0.1 * math.cos(sine / 40)),math.rad(-10 + 2 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(1+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.45 + 0 * (1+math.random(-10,10)),0.585 + -0.277 * (1+math.random(-10,10)),-0.15 - 0 * (1+math.random(-10,10)))*angles(math.rad(-20+math.random(-10,10)), math.rad(10+math.random(-10,10)), math.rad(-150+math.random(-10,10))),.1)
+LW.C0=clerp(LW.C0,cf(-1.45 + 0 * (1+math.random(-10,10)),0.5 + -0.277 * (1+math.random(-10,10)),0.1 - 0 * (1+math.random(-10,10)))*angles(math.rad(5 - 3 * math.cos(sine / 25)),math.rad(0 + 10 * math.sin(sine / 40)),math.rad(-12 + -11 * math.cos(sine / 40))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0 + -0 * math.sin(sine / 0.5)),math.rad(-90 + -5 * math.sin(sine / 40)),math.rad(0 + -0.1 * math.sin(sine / 0.5))),.3)
+end
+end
+
+if attack==false and BanishMode == "KAR" then
+RH.C0=clerp(RH.C0,cf(1,0.255 + 0.05 * math.cos(sine / 20)  - 0.05 * math.cos(sine / 40),-0.8)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1.45 + 0.05 * math.cos(sine / 20) - 0.02 * math.cos(sine / 40),0)*angles(math.rad(-0),math.rad(-90),math.rad(90))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-1.25 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(0 + 3 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-0 - 40 * math.cos(sine / 0.5)),math.rad(2 - 45 * math.cos(sine / 0.5)),math.rad(0 - 40 * math.cos(sine / 0.5))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(-10 + 5 * math.cos(sine / 26)),math.rad(-10 - 6 * math.cos(sine / 24)),math.rad(-20 - 20 * math.cos(sine / 1))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(180 - 1 * math.cos(sine / 25)),math.rad(10 + 2 * math.cos(sine / 24)),math.rad(20 + 2 * math.cos(sine / 1))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -90 * math.sin(sine / 40)),math.rad(0)),.3)
+end
+
+if attack==false and BanishMode == 2000 then
+RH.C0=clerp(RH.C0,cf(1,-1.45 + 0.05 * math.cos(sine / 20)  - 0.05 * math.cos(sine / 40),0)*angles(math.rad(10),math.rad(90),math.rad(90))*angles(math.rad(-3 + 2 * math.cos(sine / 40)),math.rad(-15),math.rad(0 + 2 * math.cos(sine / 20))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1.45 + 0.05 * math.cos(sine / 20) - 0.05 * math.cos(sine / 40),0)*angles(math.rad(10),math.rad(-90),math.rad(-90))*angles(math.rad(-3 - 2 * math.cos(sine / 40)),math.rad(1),math.rad(0 - 2 * math.cos(sine / 20))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0 + 0.02 * math.cos(sine / 40),0 - 0.02 * math.cos(sine / 40),-1.75 - 0.05 * math.cos(sine / 20))*angles(math.rad(0 + 2 * math.cos(sine / 20)),math.rad(0 + 2 * math.cos(sine / 40)),math.rad(0 + 3 * math.cos(sine / 40))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-0 - 2 * math.cos(sine / 8)),math.rad(0 - 2 * math.cos(sine / 16)),math.rad(0 - 2 * math.cos(sine / 8))),.1)
+RW.C0=clerp(RW.C0,cf(1.45,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(10 + 5 * math.cos(sine / 26)),math.rad(-10 - 4 * math.cos(sine / 24)),math.rad(20 - 2 * math.cos(sine / 24))),.1)
+LW.C0=clerp(LW.C0,cf(-1.4,0.5 + 0.05 * math.cos(sine / 28),0.1)*angles(math.rad(10 - 5 * math.cos(sine / 25)),math.rad(10 + 4 * math.cos(sine / 24)),math.rad(-20 + 2 * math.cos(sine / 24))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -90 * math.sin(sine / 40)),math.rad(0)),.3)
+end
+
 elseif torvel>2 and torvel<42 and hitfloor~=nil then
 Anim="Walk"
-if attack==false then
+if attack==false and BanishMode == 1 then
 if equipped == false then
 RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
 LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
@@ -7296,13 +9347,132 @@ RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 
 LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
 weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
 else
-RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 60 * math.cos(sine / 8))),.1)
-LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 60 * math.cos(sine / 8))),.1)
-RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,0 + 0.15 * math.cos(sine / 4))*angles(math.rad(10 - 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(-10 - root.RotVelocity.Y - 5 * math.cos(sine / 8))),.1)
-Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5 + 3 * math.cos(sine / 57)),math.rad(10 - hed.RotVelocity.Y*1.5 + 5 * math.cos(sine / 8))),.1)
-RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(-10),math.rad(0),math.rad(15 - 2 * math.cos(sine / 34))),.1)
+RH.C0=clerp(RH.C0,cf(1,-0.5 - -0.266 * math.sin(sine / 22),-0.6)*angles(math.rad(-10),math.rad(90),math.rad(-20))*angles(math.rad(0),math.rad(0),math.rad(-4 + 2 * math.sin(sine / 22))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 - -0.266 * math.sin(sine / 22),-0)*angles(math.rad(10),math.rad(-90),math.rad(20))*angles(math.rad(0),math.rad(0),math.rad(6 + 2 * math.sin(sine / 22))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.3,1.1 + 0.34 * math.cos(sine / 22))*angles(math.rad(45 - 2 * math.sin(sine / 22)),math.rad(0 + root.RotVelocity.Y*1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 22))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-2.5 + 4 * math.cos(sine / 22)),math.rad(0 + root.RotVelocity.Y*1.5),math.rad(0 - hed.RotVelocity.Y*1.5 + 10 * math.cos(sine / 22))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.255 * math.sin(sine / 22))*angles(math.rad(-10),math.rad(0),math.rad(15 - 2 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.255 * math.sin(sine / 22))*angles(math.rad(0 + 3 * math.sin(sine / 22)),math.rad(0),math.rad(-5 + 3 * math.sin(sine / 22))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -90 * math.sin(sine / 40)),math.rad(0)),.3)
+end
+end
+if attack==false and BanishMode == 7 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-5 - 5 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - hed.RotVelocity.Y*1.5 + 10 * math.cos(sine / 8))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 50 * math.cos(sine / 8)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 4))),.1)
 LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
-weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(120 + 5 * math.cos(sine / 35)),math.rad(0)),.3)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-0.5 - -0.266 * math.sin(sine / 22),-0.6)*angles(math.rad(-10),math.rad(90),math.rad(-20))*angles(math.rad(0),math.rad(0),math.rad(-4 + 2 * math.sin(sine / 22))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 - -0.266 * math.sin(sine / 22),-0)*angles(math.rad(10),math.rad(-90),math.rad(20))*angles(math.rad(0),math.rad(0),math.rad(6 + 2 * math.sin(sine / 22))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.3,1.1 + 0.34 * math.cos(sine / 22))*angles(math.rad(45 - 2 * math.sin(sine / 22)),math.rad(0 + root.RotVelocity.Y*1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 22))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(1+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.255 * math.sin(sine / 22))*angles(math.rad(-10),math.rad(0),math.rad(15 - 2 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.255 * math.sin(sine / 22))*angles(math.rad(0 + 3 * math.sin(sine / 22)),math.rad(0),math.rad(-5 + 3 * math.sin(sine / 22))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0.5 + 5 * math.cos(sine / 30),0,-1.5)*angles(math.rad(0),math.rad(0),math.rad(190 + -800 * math.sin(sine / 40))),.3)
+end
+end
+if attack==false and BanishMode == 2 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-5 - 5 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - hed.RotVelocity.Y*1.5 + 10 * math.cos(sine / 8))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 50 * math.cos(sine / 8)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 4))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-1 - 0.15 * math.cos(sine / 3),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0),math.rad(0 + 85 * math.cos(sine / 6))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 - 0.15 * math.cos(sine / 3),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0),math.rad(0 + 85 * math.cos(sine / 6))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.3,-0.05 + 0.15 * math.cos(sine / 3))*angles(math.rad(15 - 4 * math.cos(sine / 3)),math.rad(0 + root.RotVelocity.Y*1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 6))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-6 - 15 * math.cos(sine / 0.5)),math.rad(6 - 15 * math.cos(sine / 0.5)),math.rad(10 - 20 * math.cos(sine / 0.5))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 4.6))*angles(math.rad(-40),math.rad(0),math.rad(25 - 2 * math.cos(sine / 34))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.5 * math.cos(sine / 6))*angles(math.rad(0 + 140 * math.cos(sine / 6)),math.rad(0),math.rad(-5 + 20 * math.cos(sine / 3))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -360 * math.sin(sine / 40)),math.rad(0)),.3)
+end
+end
+if attack==false and BanishMode == 4 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(20+math.random(-30,30)), math.rad(0+math.random(-30,30)), math.rad(0+math.random(-30,30))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 50 * math.cos(sine / 8)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 4))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 12),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 16)),math.rad(0 + 22 * math.cos(sine / 16))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 12),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 16)),math.rad(0 + 22 * math.cos(sine / 16))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 12))*angles(math.rad(10 + 3 * math.cos(sine / 12)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 16))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(30+math.random(-30,30)), math.rad(0+math.random(-30,30)), math.rad(0+math.random(-30,30))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 16))*angles(math.rad(12 - 12 * math.cos(sine / 16)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 8))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 16))*angles(math.rad(12 + 12 * math.cos(sine / 16)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 8))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -100 * math.sin(sine / 80)),math.rad(0)),.3)
+end
+end
+
+if attack==false and BanishMode == 5 then
+if equipped == false then
+kan.Pitch = 1
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.2 * math.sin(sine / 8),-0.12 + 0.2 * math.cos(sine / 8))*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + -40 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + -0.2 * math.sin(sine / 8),-0.12 + -0.2 * math.cos(sine / 8))*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + -40 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(10 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1),math.rad(0 - root.RotVelocity.Y - 6 * math.sin(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(3+math.random(-10,10)), math.rad(0+math.random(-25,12)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + -0.25 * math.sin(sine / 8))*angles(math.rad(12 + 18 * math.cos(sine / 8)),math.rad(0),math.rad(0 + 0 * math.cos(sine / 4))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - -0.25 * math.sin(sine / 8))*angles(math.rad(12 + -18 * math.cos(sine / 8)),math.rad(0),math.rad(0 + 0 * math.cos(sine / 4))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+kan.Pitch = 1
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.2 * math.sin(sine / 12),-0.12 + 0.2 * math.cos(sine / 12))*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 12)),math.rad(0 + -22 * math.cos(sine / 12))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + -0.2 * math.sin(sine / 12),-0.12 + -0.2 * math.cos(sine / 12))*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 12)),math.rad(0 + -22 * math.cos(sine / 12))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 6))*angles(math.rad(10 + 3 * math.cos(sine / 6)),math.rad(0 + root.RotVelocity.Y/0.6),math.rad(0 - root.RotVelocity.Y - 6 * math.sin(sine / 12))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(3+math.random(-10,10)), math.rad(0+math.random(-25,12)), math.rad(0+math.random(-10,10))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + -0.25 * math.sin(sine / 12))*angles(math.rad(12 + 18 * math.cos(sine / 12)),math.rad(0),math.rad(0 + 0 * math.cos(sine / 6))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - -0.25 * math.sin(sine / 12))*angles(math.rad(95 + -3 * math.cos(sine / 12)),math.rad(0),math.rad(0 + 0 * math.cos(sine / 6))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(-90 + -2 * math.sin(sine / 80)),math.rad(0)),.3)
+end
+end
+
+if attack==false and BanishMode == 1000 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(20+math.random(-100,100)), math.rad(0+math.random(-100,100)), math.rad(0+math.random(-100,100))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 50 * math.cos(sine / 8)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 4))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1 + 0.2 * (1+math.random(-5,5)),-1 + 0.2 * (1+math.random(-5,5)),0 + 0.1 * (1+math.random(-5,5)))*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 18)),math.rad(0 + -22 * math.cos(sine / 18))),.1)
+LH.C0=clerp(LH.C0,cf(-1 + 0.2 * (1+math.random(-5,5)),-1 + 0.2 * (1+math.random(-5,5)),0 + -0.1 * (1+math.random(-5,5)))*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 18)),math.rad(0 + -22 * math.cos(sine / 18))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(-0 + 0.05 * (1+math.random(-10,10)),-0.05 + 0.05 * (1+math.random(-10,10)),-0.05 + 0.05 * (1+math.random(-10,10)))*angles(math.rad(10 + 3 * math.cos(sine / 9)),math.rad(0 + root.RotVelocity.Y/1),math.rad(0 - root.RotVelocity.Y - -6 * math.sin(sine / 18))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(3+math.random(-100,100)), math.rad(0+math.random(-100,100)), math.rad(0+math.random(-100,100))),.1)
+RW.C0=clerp(RW.C0,cf(1.5 + 0.05 * (1+math.random(-20,20)),0.5 + 0.05 * (1+math.random(-20,20)),0 + 0.05 * (1+math.random(-20,20)))*angles(math.rad(-20+math.random(-10,10)), math.rad(0+math.random(-10,10)), math.rad(215+math.random(-10,10))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5 + 0.05 * (1+math.random(-20,20)),0.5 + 0.05 * (1+math.random(-20,20)),0 - -0.25 * (1+math.random(-20,20)))*angles(math.rad(12 + -18 * math.cos(sine / 18)),math.rad(0),math.rad(0 + 0 * math.cos(sine / 9))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(-90 + -2 * math.sin(sine / 80)),math.rad(0)),.3)
+end
+end
+
+if attack==false and BanishMode == 3 then
+if equipped == false then
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-5 - 5 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - hed.RotVelocity.Y*1.5 + 10 * math.cos(sine / 8))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 50 * math.cos(sine / 8)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 4))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(-3,0,-0.5)*angles(math.rad(0),math.rad(0),math.rad(-40)),.3)
+else
+RH.C0=clerp(RH.C0,cf(1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+LH.C0=clerp(LH.C0,cf(-1,-1 + 0.05 * math.cos(sine / 4),0)*angles(math.rad(0),math.rad(-90),math.rad(0))*angles(math.rad(0),math.rad(0 + 5 * math.cos(sine / 8)),math.rad(0 + 45 * math.cos(sine / 8))),.1)
+RootJoint.C0=clerp(RootJoint.C0,RootCF*cf(0,-0.05,-0.05 + 0.05 * math.cos(sine / 4))*angles(math.rad(5 + 3 * math.cos(sine / 4)),math.rad(0 + root.RotVelocity.Y/1.5),math.rad(0 - root.RotVelocity.Y - 10 * math.cos(sine / 8))),.1)
+Torso.Neck.C0=clerp(Torso.Neck.C0,necko*angles(math.rad(-0 - 35 * math.cos(sine / 0.5)),math.rad(10 - 30 * math.cos(sine / 0.5)),math.rad(0 - 25 * math.cos(sine / 0.5))),.1)
+RW.C0=clerp(RW.C0,cf(1.5,0.5,0 + 0.25 * math.cos(sine / 8))*angles(math.rad(0 - 50 * math.cos(sine / 8)),math.rad(0),math.rad(5 - 10 * math.cos(sine / 4))),.1)
+LW.C0=clerp(LW.C0,cf(-1.5,0.5,0 - 0.25 * math.cos(sine / 8))*angles(math.rad(0 + 50 * math.cos(sine / 8)),math.rad(0),math.rad(-5 + 10 * math.cos(sine / 4))),.1)
+weaponweld.C1=clerp(weaponweld.C1,cf(0,1,0)*angles(math.rad(0),math.rad(190 + -999 * math.sin(sine / 40)),math.rad(0)),.3)
 end
 end
 elseif torvel>=42 and hitfloor~=nil then
