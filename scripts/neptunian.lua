@@ -1,5 +1,5 @@
 local UserConfig = {
-    ["YeImTory"] = {
+    ["Galaxy"] = {
         Text = "Neptunian remaker",
         TextColor = Color3.fromRGB(255, 215, 0),
         HighlightColor = Color3.fromRGB(255, 215, 0),
